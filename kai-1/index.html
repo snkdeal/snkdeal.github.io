@@ -171,126 +171,272 @@ img,svg{display:block;max-width:100%}ul{list-style:none}button{cursor:pointer;ba
 </div></div></footer>
 
 <script>
-    /* Auto-detect PRODUCT_ID from URL slug — works on GitHub Pages */
-var PRODUCT_ID = (function() {
+/* Auto-detect PRODUCT_ID from URL slug — works on GitHub Pages */
+var PRODUCT_ID = (function () {
   var path = window.location.pathname; // e.g. /goey-3/ or /goey-3/index.html
   var parts = path.replace(/\/index\.html$/, '').split('/').filter(Boolean);
-  return parts[parts.length - 1] || 'goey-3'; // last non-empty segment
+  return parts[parts.length - 1] || 'goey-3';
 })();
-/* ── CHANGE THIS ONE LINE per product page ── */
-// var PRODUCT_ID = 'goey-3'; // ← 'goey-3' | 'wade-808-ultra-v2' | 'kai-1'
 
-(function(){var t=document.querySelector('[data-tt]'),r=document.documentElement;var d=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';r.setAttribute('data-theme',d);if(t)t.addEventListener('click',function(){d=d==='dark'?'light':'dark';r.setAttribute('data-theme',d);t.innerHTML=d==='dark'?'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>':'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';});})();
-var io=new IntersectionObserver(function(e){e.forEach(function(el){if(el.isIntersecting){el.target.classList.add('on');io.unobserve(el.target);}});},{threshold:.08});
-document.querySelectorAll('.r').forEach(function(el){io.observe(el);});
+(function () {
+  var t = document.querySelector('[data-tt]');
+  var r = document.documentElement;
+  var d = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
+  r.setAttribute('data-theme', d);
 
-var SVGS={
-  'goey-3':'<svg viewBox="0 0 260 180" width="230" fill="none"><ellipse cx="130" cy="168" rx="104" ry="9" fill="rgba(0,0,0,.05)"/><path d="M36 138 Q34 108 64 88 L150 79 Q194 77 212 96 L216 140Z" fill="#f4f1ee"/><path d="M66 88 Q100 72 140 71 L141 91 Q108 93 74 108Z" fill="#E8291C" opacity=".9"/><path d="M162 75 Q194 77 210 94 L208 112 Q188 98 166 96Z" fill="#E8291C" opacity=".55"/><path d="M36 138 Q35 110 52 98 L74 103 Q58 120 56 138Z" fill="#e8e2dc"/><path d="M34 134 Q32 143 36 138 L216 140 Q219 147 215 135Z" fill="#faf9f7" stroke="rgba(0,0,0,.06)" stroke-width=".8"/><path d="M32 146 Q32 155 36 151 L214 149 Q218 149 218 143 L216 140Z" fill="#18160f" opacity=".88"/><line x1="96" y1="102" x2="150" y2="95" stroke="#ccc" stroke-width="1.3" stroke-linecap="round"/><line x1="101" y1="113" x2="155" y2="106" stroke="#ccc" stroke-width="1.3" stroke-linecap="round"/><line x1="107" y1="124" x2="160" y2="117" stroke="#ccc" stroke-width="1.3" stroke-linecap="round"/></svg>',
-  'wade-808-ultra-v2':'<svg viewBox="0 0 260 180" width="230" fill="none"><ellipse cx="130" cy="168" rx="104" ry="9" fill="rgba(0,0,0,.05)"/><path d="M36 138 Q34 106 62 84 L148 74 Q190 72 208 92 L212 140Z" fill="#1a1e2a"/><path d="M64 84 Q98 68 138 67 L138 88 Q106 90 72 106Z" fill="#E8291C" opacity=".9"/><path d="M160 72 Q190 74 206 91 L204 110 Q184 96 164 94Z" fill="#E8291C" opacity=".6"/><path d="M36 138 Q35 108 52 96 L72 101 Q56 118 54 138Z" fill="#242838"/><path d="M34 134 Q32 143 36 138 L212 140 Q216 148 210 135Z" fill="#2a2e3e" stroke="rgba(255,255,255,.05)" stroke-width=".8"/><path d="M32 146 Q32 155 36 151 L210 149 Q214 149 214 143 L212 140Z" fill="#E8291C" opacity=".95"/><line x1="94" y1="98" x2="148" y2="91" stroke="rgba(255,255,255,.18)" stroke-width="1.2" stroke-linecap="round"/><line x1="99" y1="109" x2="153" y2="102" stroke="rgba(255,255,255,.18)" stroke-width="1.2" stroke-linecap="round"/><line x1="105" y1="120" x2="158" y2="113" stroke="rgba(255,255,255,.18)" stroke-width="1.2" stroke-linecap="round"/></svg>',
-  'kai-1':'<svg viewBox="0 0 260 180" width="230" fill="none"><ellipse cx="130" cy="168" rx="104" ry="9" fill="rgba(0,0,0,.05)"/><path d="M36 138 Q34 108 64 88 L150 79 Q194 77 212 96 L216 140Z" fill="#f0f5e8"/><path d="M66 88 Q100 72 140 71 L141 91 Q108 93 74 108Z" fill="#84cc16" opacity=".85"/><path d="M162 75 Q194 77 210 94 L208 112 Q188 98 166 96Z" fill="#84cc16" opacity=".55"/><path d="M36 138 Q35 110 52 98 L74 103 Q58 120 56 138Z" fill="#dce8cc"/><text x="178" y="128" font-size="26" font-weight="900" fill="#84cc16" opacity=".55" font-family="sans-serif">A</text><path d="M34 134 Q32 143 36 138 L216 140 Q219 147 215 135Z" fill="#f8fcf0" stroke="rgba(0,0,0,.05)" stroke-width=".8"/><path d="M32 146 Q32 155 36 151 L214 149 Q218 149 218 143 L216 140Z" fill="#18160f" opacity=".85"/><line x1="96" y1="102" x2="150" y2="95" stroke="#aad06c" stroke-width="1.5" stroke-linecap="round"/><line x1="101" y1="113" x2="155" y2="106" stroke="#aad06c" stroke-width="1.5" stroke-linecap="round"/><line x1="107" y1="124" x2="160" y2="117" stroke="#aad06c" stroke-width="1.5" stroke-linecap="round"/></svg>'
-};
-var BGS={'goey-3':'bwm','wade-808-ultra-v2':'bwk','kai-1':'bvv'};
-
-fetch('../products.json').then(function(r){return r.json();}).then(function(data){
-  var p=data[PRODUCT_ID];
-  if(!p)return;
-  document.title='SNKDEAL — '+p.name;
-  document.querySelector('meta[name="description"]').content=p.tagline+' — SNKDEAL';
-  document.getElementById('crumb-name').textContent=p.name;
-  document.getElementById('p-brand').textContent=p.brand;
-  document.getElementById('h1').textContent=p.name;
-  document.getElementById('p-tagline').textContent=p.tagline;
-  document.getElementById('p-reviews').textContent=p.reviews+' reviews';
-  document.getElementById('p-sizes').textContent=p.sizes;
-  document.getElementById('p-price').textContent=p.price;
-  document.getElementById('d-color').textContent=p.colorway;
-  document.getElementById('d-sizes').textContent=p.sizes;
-  document.getElementById('d-rating').textContent=p.rating+'★';
-  document.getElementById('d-reviews').textContent=p.reviews;
-  if(p.price_original){var o=document.getElementById('p-price-old');o.textContent=p.price_original;o.style.display='';document.getElementById('p-save').style.display='';}
-  document.getElementById('feat-list').innerHTML=[p.feature1,p.feature2,p.feature3].map(function(f){return '<li class="fi"><span class="fd"></span>'+f+'</li>';}).join('');
-  document.getElementById('btn-buy').href=p['affiliate-link'];
-  document.getElementById('btn-tt').href=p['tiktok-link'];
-  var stg=document.getElementById('shoe-stage');
-  stg.className='stg '+(BGS[PRODUCT_ID]||'bwm');
-  stg.innerHTML=SVGS[PRODUCT_ID]||'';
-  // Related
-  var rg=document.getElementById('related');
-  Object.keys(data).forEach(function(k){
-    if(k===PRODUCT_ID)return;
-    var rp=data[k],fn=SVGS[k]||'',bg=BGS[k]||'bwm';
-    var d2=document.createElement('article');
-    d2.className='mc2';
-    d2.innerHTML='<div class="ms '+bg+'">'+fn+'</div><div class="mb"><p class="mbn">'+rp.brand+'</p><h3 class="mnn">'+rp.name+'</h3><div class="mf"><span class="mp">'+rp.price+'</span><span class="mc3">View Deal &rarr;</span></div></div>';
-    d2.addEventListener('click',function(){window.open(rp['affiliate-link'],'_blank','noopener,noreferrer');});
-    rg.appendChild(d2);
-  });
-  document.querySelectorAll('.r').forEach(function(el){io.observe(el);});
-});
-
-// SEO — dynamic meta + structured data
-document.title = p.name + ' Deal — SNKDEAL';
-document.querySelector('meta[name="description"]').content =
-  p.name + ' by ' + p.brand + '. ' + p.tagline + ' Reviewed by @popwiremedia on TikTok. Now ' + p.price + '.';
-
-// Canonical
-var canon = document.createElement('link');
-canon.rel = 'canonical';
-canon.href = 'https://snkdeal.github.io/' + PRODUCT_ID + '/';
-document.head.appendChild(canon);
-
-// Open Graph
-var ogTags = [
-  ['og:type','product'],
-  ['og:title', p.name + ' Deal — SNKDEAL'],
-  ['og:description', p.tagline + ' Reviewed by @popwiremedia. ' + p.price],
-  ['og:url', 'https://snkdeal.github.io/' + PRODUCT_ID + '/'],
-  ['og:site_name', 'SNKDEAL'],
-  ['twitter:card', 'summary_large_image'],
-  ['twitter:site', '@popwiremedia'],
-  ['twitter:title', p.name + ' — ' + p.price],
-  ['twitter:description', p.tagline]
-];
-ogTags.forEach(function(t) {
-  var m = document.createElement('meta');
-  m.setAttribute(t[0].startsWith('twitter') ? 'name' : 'property', t[0]);
-  m.content = t[1]; document.head.appendChild(m);
-});
-
-// JSON-LD Product structured data (helps Google Shopping)
-document.getElementById('ld-product').textContent = JSON.stringify({
-  "@context": "https://schema.org",
-  "@type": "Product",
-  "name": p.name,
-  "brand": { "@type": "Brand", "name": p.brand },
-  "description": p.tagline,
-  "offers": {
-    "@type": "Offer",
-    "price": p.price.replace('$',''),
-    "priceCurrency": "USD",
-    "availability": "https://schema.org/InStock",
-    "url": p['affiliate-link']
-  },
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": p.rating,
-    "reviewCount": p.reviews.replace('k','000')
-  },
-  "author": {
-    "@type": "Person",
-    "name": "popwiremedia",
-    "sameAs": "https://www.tiktok.com/@popwiremedia"
+  if (t) {
+    t.addEventListener('click', function () {
+      d = d === 'dark' ? 'light' : 'dark';
+      r.setAttribute('data-theme', d);
+      t.innerHTML =
+        d === 'dark'
+          ? '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
+          : '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+    });
   }
-});
-</script>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-PFBJ10FFT1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+})();
 
-  gtag('config', 'G-PFBJ10FFT1');
+var io = new IntersectionObserver(function (entries) {
+  entries.forEach(function (el) {
+    if (el.isIntersecting) {
+      el.target.classList.add('on');
+      io.unobserve(el.target);
+    }
+  });
+}, { threshold: 0.08 });
+
+document.querySelectorAll('.r').forEach(function (el) {
+  io.observe(el);
+});
+
+var SVGS = {
+  'goey-3': '<svg viewBox="0 0 260 180" width="230" fill="none"><ellipse cx="130" cy="168" rx="104" ry="9" fill="rgba(0,0,0,.05)"/><path d="M36 138 Q34 108 64 88 L150 79 Q194 77 212 96 L216 140Z" fill="#f4f1ee"/><path d="M66 88 Q100 72 140 71 L141 91 Q108 93 74 108Z" fill="#E8291C" opacity=".9"/><path d="M162 75 Q194 77 210 94 L208 112 Q188 98 166 96Z" fill="#E8291C" opacity=".55"/><path d="M36 138 Q35 110 52 98 L74 103 Q58 120 56 138Z" fill="#e8e2dc"/><path d="M34 134 Q32 143 36 138 L216 140 Q219 147 215 135Z" fill="#faf9f7" stroke="rgba(0,0,0,.06)" stroke-width=".8"/><path d="M32 146 Q32 155 36 151 L214 149 Q218 149 218 143 L216 140Z" fill="#18160f" opacity=".88"/><line x1="96" y1="102" x2="150" y2="95" stroke="#ccc" stroke-width="1.3" stroke-linecap="round"/><line x1="101" y1="113" x2="155" y2="106" stroke="#ccc" stroke-width="1.3" stroke-linecap="round"/><line x1="107" y1="124" x2="160" y2="117" stroke="#ccc" stroke-width="1.3" stroke-linecap="round"/></svg>',
+  'wade-808-ultra-v2': '<svg viewBox="0 0 260 180" width="230" fill="none"><ellipse cx="130" cy="168" rx="104" ry="9" fill="rgba(0,0,0,.05)"/><path d="M36 138 Q34 106 62 84 L148 74 Q190 72 208 92 L212 140Z" fill="#1a1e2a"/><path d="M64 84 Q98 68 138 67 L138 88 Q106 90 72 106Z" fill="#E8291C" opacity=".9"/><path d="M160 72 Q190 74 206 91 L204 110 Q184 96 164 94Z" fill="#E8291C" opacity=".6"/><path d="M36 138 Q35 108 52 96 L72 101 Q56 118 54 138Z" fill="#242838"/><path d="M34 134 Q32 143 36 138 L212 140 Q216 148 210 135Z" fill="#2a2e3e" stroke="rgba(255,255,255,.05)" stroke-width=".8"/><path d="M32 146 Q32 155 36 151 L210 149 Q214 149 214 143 L212 140Z" fill="#E8291C" opacity=".95"/><line x1="94" y1="98" x2="148" y2="91" stroke="rgba(255,255,255,.18)" stroke-width="1.2" stroke-linecap="round"/><line x1="99" y1="109" x2="153" y2="102" stroke="rgba(255,255,255,.18)" stroke-width="1.2" stroke-linecap="round"/><line x1="105" y1="120" x2="158" y2="113" stroke="rgba(255,255,255,.18)" stroke-width="1.2" stroke-linecap="round"/></svg>',
+  'kai-1': '<svg viewBox="0 0 260 180" width="230" fill="none"><ellipse cx="130" cy="168" rx="104" ry="9" fill="rgba(0,0,0,.05)"/><path d="M36 138 Q34 108 64 88 L150 79 Q194 77 212 96 L216 140Z" fill="#f0f5e8"/><path d="M66 88 Q100 72 140 71 L141 91 Q108 93 74 108Z" fill="#84cc16" opacity=".85"/><path d="M162 75 Q194 77 210 94 L208 112 Q188 98 166 96Z" fill="#84cc16" opacity=".55"/><path d="M36 138 Q35 110 52 98 L74 103 Q58 120 56 138Z" fill="#dce8cc"/><text x="178" y="128" font-size="26" font-weight="900" fill="#84cc16" opacity=".55" font-family="sans-serif">A</text><path d="M34 134 Q32 143 36 138 L216 140 Q219 147 215 135Z" fill="#f8fcf0" stroke="rgba(0,0,0,.05)" stroke-width=".8"/><path d="M32 146 Q32 155 36 151 L214 149 Q218 149 218 143 L216 140Z" fill="#18160f" opacity=".85"/><line x1="96" y1="102" x2="150" y2="95" stroke="#aad06c" stroke-width="1.5" stroke-linecap="round"/><line x1="101" y1="113" x2="155" y2="106" stroke="#aad06c" stroke-width="1.5" stroke-linecap="round"/><line x1="107" y1="124" x2="160" y2="117" stroke="#aad06c" stroke-width="1.5" stroke-linecap="round"/></svg>'
+};
+
+var BGS = {
+  'goey-3': 'bwm',
+  'wade-808-ultra-v2': 'bwk',
+  'kai-1': 'bvv'
+};
+
+function getProductVisual(p, productId) {
+  if (p.image && p.image.trim() !== '') {
+    return '<img src="' + p.image + '" alt="' + p.name + '" loading="eager" style="max-width:100%;max-height:100%;object-fit:contain;display:block;">';
+  }
+  return SVGS[productId] || '';
+}
+
+function setMetaByName(name, content) {
+  if (!content) return;
+  var el = document.querySelector('meta[name="' + name + '"]');
+  if (!el) {
+    el = document.createElement('meta');
+    el.setAttribute('name', name);
+    document.head.appendChild(el);
+  }
+  el.setAttribute('content', content);
+}
+
+function setMetaByProperty(property, content) {
+  if (!content) return;
+  var el = document.querySelector('meta[property="' + property + '"]');
+  if (!el) {
+    el = document.createElement('meta');
+    el.setAttribute('property', property);
+    document.head.appendChild(el);
+  }
+  el.setAttribute('content', content);
+}
+
+function setCanonical(url) {
+  var canon = document.querySelector('link[rel="canonical"]');
+  if (!canon) {
+    canon = document.createElement('link');
+    canon.rel = 'canonical';
+    document.head.appendChild(canon);
+  }
+  canon.href = url;
+}
+
+function parsePrice(value) {
+  return String(value || '').replace(/[^0-9.]/g, '');
+}
+
+function parseReviewCount(value) {
+  var raw = String(value || '').trim().toLowerCase();
+  if (raw.indexOf('k') > -1) {
+    return String(Math.round(parseFloat(raw.replace('k', '')) * 1000));
+  }
+  return raw.replace(/[^0-9]/g, '') || '0';
+}
+
+fetch('../products.json')
+  .then(function (r) { return r.json(); })
+  .then(function (data) {
+    var p = data[PRODUCT_ID];
+    if (!p) {
+      document.title = 'Product Not Found — SNKDEAL';
+      document.getElementById('h1').textContent = 'Product not found';
+      document.getElementById('p-tagline').textContent = 'We could not find this product.';
+      return;
+    }
+
+    var siteUrl = 'https://snkdeal.github.io';
+    var pageUrl = siteUrl + p['page-link'];
+    var imageUrl = p.image && p.image.trim() !== ''
+      ? (p.image.indexOf('http') === 0 ? p.image : siteUrl + p.image)
+      : siteUrl + '/og-image.jpg';
+
+    /* UI */
+    document.title = p.name + ' Deal — SNKDEAL';
+    setMetaByName('description', p.name + ' by ' + p.brand + '. ' + p.tagline + ' Reviewed by @popwiremedia on TikTok. Now ' + p.price + '.');
+    setCanonical(pageUrl);
+
+    document.getElementById('crumb-name').textContent = p.name;
+    document.getElementById('p-brand').textContent = p.brand;
+    document.getElementById('h1').textContent = p.name;
+    document.getElementById('p-tagline').textContent = p.tagline;
+    document.getElementById('p-reviews').textContent = p.reviews + ' reviews';
+    document.getElementById('p-sizes').textContent = p.sizes;
+    document.getElementById('p-price').textContent = p.price;
+
+    document.getElementById('d-color').textContent = p.colorway;
+    document.getElementById('d-sizes').textContent = p.sizes;
+    document.getElementById('d-rating').textContent = p.rating + '★';
+    document.getElementById('d-reviews').textContent = p.reviews;
+
+    if (p.price_original) {
+      var oldPriceEl = document.getElementById('p-price-old');
+      oldPriceEl.textContent = p.price_original;
+      oldPriceEl.style.display = '';
+      document.getElementById('p-save').style.display = '';
+    }
+
+    document.getElementById('feat-list').innerHTML = [
+      p.feature1,
+      p.feature2,
+      p.feature3
+    ].map(function (f) {
+      return '<li class="fi"><span class="fd"></span>' + f + '</li>';
+    }).join('');
+
+    document.getElementById('btn-buy').href = p['affiliate-link'];
+    document.getElementById('btn-tt').href = p['tiktok-link'];
+
+    var stg = document.getElementById('shoe-stage');
+    stg.className = 'stg ' + (BGS[PRODUCT_ID] || 'bwm');
+    stg.innerHTML = getProductVisual(p, PRODUCT_ID);
+
+    /* Related products */
+    var rg = document.getElementById('related');
+    rg.innerHTML = '';
+
+    Object.keys(data).forEach(function (k) {
+      if (k === PRODUCT_ID) return;
+
+      var rp = data[k];
+      var bg = BGS[k] || 'bwm';
+      var visual = getProductVisual(rp, k);
+
+      var d2 = document.createElement('article');
+      d2.className = 'mc2';
+      d2.innerHTML =
+        '<div class="ms ' + bg + '">' + visual + '</div>' +
+        '<div class="mb">' +
+          '<p class="mbn">' + rp.brand + '</p>' +
+          '<h3 class="mnn">' + rp.name + '</h3>' +
+          '<div class="mf">' +
+            '<span class="mp">' + rp.price + '</span>' +
+            '<span class="mc3">View Deal &rarr;</span>' +
+          '</div>' +
+        '</div>';
+
+      d2.addEventListener('click', function () {
+        window.location.href = rp['page-link'];
+      });
+
+      rg.appendChild(d2);
+    });
+
+    document.querySelectorAll('.r').forEach(function (el) {
+      io.observe(el);
+    });
+
+    /* SEO */
+    setMetaByProperty('og:type', 'product');
+    setMetaByProperty('og:title', p.name + ' Deal — SNKDEAL');
+    setMetaByProperty('og:description', p.tagline + ' Reviewed by @popwiremedia. Now ' + p.price + '.');
+    setMetaByProperty('og:url', pageUrl);
+    setMetaByProperty('og:site_name', 'SNKDEAL');
+    setMetaByProperty('og:image', imageUrl);
+
+    setMetaByName('twitter:card', 'summary_large_image');
+    setMetaByName('twitter:site', '@popwiremedia');
+    setMetaByName('twitter:title', p.name + ' Deal — SNKDEAL');
+    setMetaByName('twitter:description', p.tagline + ' Now ' + p.price + '.');
+    setMetaByName('twitter:image', imageUrl);
+
+    var productLd = {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "name": p.name,
+      "brand": {
+        "@type": "Brand",
+        "name": p.brand
+      },
+      "description": p.tagline,
+      "image": imageUrl,
+      "sku": p.id,
+      "offers": {
+        "@type": "Offer",
+        "price": parsePrice(p.price),
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock",
+        "url": p['affiliate-link']
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": p.rating,
+        "reviewCount": parseReviewCount(p.reviews)
+      }
+    };
+
+    document.getElementById('ld-product').textContent = JSON.stringify(productLd);
+
+    var breadcrumbLdEl = document.getElementById('ld-breadcrumb');
+    if (!breadcrumbLdEl) {
+      breadcrumbLdEl = document.createElement('script');
+      breadcrumbLdEl.type = 'application/ld+json';
+      breadcrumbLdEl.id = 'ld-breadcrumb';
+      document.head.appendChild(breadcrumbLdEl);
+    }
+
+    breadcrumbLdEl.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": siteUrl + '/'
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": p.name,
+          "item": pageUrl
+        }
+      ]
+    });
+  })
+  .catch(function () {
+    document.title = 'Error — SNKDEAL';
+    document.getElementById('h1').textContent = 'Could not load product';
+    document.getElementById('p-tagline').textContent = 'Please check that products.json exists and the path is correct.';
+  });
 </script>
 </body>
 </html>

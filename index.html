@@ -43,6 +43,13 @@
 <link rel="preconnect" href="https://api.fontshare.com">
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=cabinet-grotesk@700,800&display=swap" rel="stylesheet">
 <style>
+    .stg img,
+.ms img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
 :root,[data-theme="light"]{
   --fd:'Cabinet Grotesk','Helvetica Neue',sans-serif;
   --fb:'Satoshi','Inter',sans-serif;
@@ -265,45 +272,203 @@ a,button{transition:color var(--tr),background var(--tr),box-shadow var(--tr),tr
 </div></div></footer>
 
 <script>
-(function(){var t=document.querySelector('[data-tt]'),r=document.documentElement;var d=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';r.setAttribute('data-theme',d);if(t)t.addEventListener('click',function(){d=d==='dark'?'light':'dark';r.setAttribute('data-theme',d);t.innerHTML=d==='dark'?'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>':'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';});})();
-var io=new IntersectionObserver(function(e){e.forEach(function(el){if(el.isIntersecting){el.target.classList.add('on');io.unobserve(el.target);}});},{threshold:.1});
-document.querySelectorAll('.r').forEach(function(el){io.observe(el);});
+(function () {
+  var t = document.querySelector('[data-tt]');
+  var r = document.documentElement;
+  var d = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
+  r.setAttribute('data-theme', d);
 
-var SVGS={
-  'goey-3':'<svg viewBox="0 0 200 140" width="190" fill="none"><ellipse cx="100" cy="130" rx="80" ry="7" fill="rgba(0,0,0,.05)"/><path d="M28 108 Q26 84 52 68 L116 61 Q150 59 166 74 L170 110Z" fill="#f4f1ee"/><path d="M54 68 Q80 56 110 55 L111 71 Q84 73 58 84Z" fill="#E8291C" opacity=".9"/><path d="M128 59 Q150 61 163 74 L161 86 Q144 76 130 75Z" fill="#E8291C" opacity=".55"/><path d="M28 108 Q27 86 40 76 L58 80 Q46 93 44 108Z" fill="#e8e2dc"/><path d="M26 106 Q24 113 28 108 L170 110 Q172 115 168 107Z" fill="#faf9f7" stroke="rgba(0,0,0,.06)" stroke-width=".8"/><path d="M24 115 Q24 121 28 118 L168 116 Q172 116 172 111 L170 110Z" fill="#18160f" opacity=".88"/><line x1="74" y1="78" x2="116" y2="73" stroke="#ccc" stroke-width="1.2" stroke-linecap="round"/><line x1="78" y1="87" x2="120" y2="82" stroke="#ccc" stroke-width="1.2" stroke-linecap="round"/><line x1="83" y1="96" x2="124" y2="91" stroke="#ccc" stroke-width="1.2" stroke-linecap="round"/></svg>',
-  'wade-808-ultra-v2':'<svg viewBox="0 0 200 140" width="190" fill="none"><ellipse cx="100" cy="130" rx="80" ry="7" fill="rgba(0,0,0,.05)"/><path d="M28 108 Q26 82 50 66 L114 58 Q148 56 164 72 L168 110Z" fill="#1a1e2a"/><path d="M52 66 Q78 52 110 51 L110 68 Q82 70 56 82Z" fill="#E8291C" opacity=".9"/><path d="M126 56 Q150 58 161 72 L159 85 Q142 74 128 73Z" fill="#E8291C" opacity=".6"/><path d="M28 108 Q27 84 40 74 L58 78 Q46 92 44 108Z" fill="#242838"/><path d="M26 106 Q24 113 28 108 L168 110 Q172 116 166 107Z" fill="#2a2e3e" stroke="rgba(255,255,255,.06)" stroke-width=".8"/><path d="M24 115 Q24 121 28 118 L166 116 Q170 116 170 111 L168 110Z" fill="#E8291C" opacity=".95"/><line x1="72" y1="76" x2="114" y2="71" stroke="rgba(255,255,255,.2)" stroke-width="1.1" stroke-linecap="round"/><line x1="76" y1="85" x2="118" y2="80" stroke="rgba(255,255,255,.2)" stroke-width="1.1" stroke-linecap="round"/><line x1="81" y1="94" x2="122" y2="89" stroke="rgba(255,255,255,.2)" stroke-width="1.1" stroke-linecap="round"/></svg>',
-  'kai-1':'<svg viewBox="0 0 200 140" width="190" fill="none"><ellipse cx="100" cy="130" rx="80" ry="7" fill="rgba(0,0,0,.05)"/><path d="M28 108 Q26 84 52 68 L116 61 Q150 59 166 74 L170 110Z" fill="#f0f5e8"/><path d="M54 68 Q80 56 110 55 L111 71 Q84 73 58 84Z" fill="#84cc16" opacity=".85"/><path d="M128 59 Q150 61 163 74 L161 86 Q144 76 130 75Z" fill="#84cc16" opacity=".55"/><path d="M28 108 Q27 86 40 76 L58 80 Q46 93 44 108Z" fill="#dce8cc"/><text x="136" y="104" font-size="20" font-weight="900" fill="#84cc16" opacity=".6" font-family="sans-serif">A</text><path d="M26 106 Q24 113 28 108 L170 110 Q172 115 168 107Z" fill="#f8fcf0" stroke="rgba(0,0,0,.05)" stroke-width=".8"/><path d="M24 115 Q24 121 28 118 L168 116 Q172 116 172 111 L170 110Z" fill="#18160f" opacity=".85"/><line x1="74" y1="78" x2="116" y2="73" stroke="#aad06c" stroke-width="1.4" stroke-linecap="round"/><line x1="78" y1="87" x2="120" y2="82" stroke="#aad06c" stroke-width="1.4" stroke-linecap="round"/><line x1="83" y1="96" x2="124" y2="91" stroke="#aad06c" stroke-width="1.4" stroke-linecap="round"/></svg>'
-};
-var BGS={'goey-3':'bwm','wade-808-ultra-v2':'bwk','kai-1':'bvv'};
-var BADGES={'Hot':'bh','New':'bn','Collab':'bc','Sale':'bs'};
+  if (t) {
+    t.addEventListener('click', function () {
+      d = d === 'dark' ? 'light' : 'dark';
+      r.setAttribute('data-theme', d);
+      t.innerHTML =
+        d === 'dark'
+          ? '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
+          : '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+    });
+  }
+})();
 
-function toggleWish(e,btn){e.stopPropagation();var on=btn.dataset.w==='1';btn.dataset.w=on?'0':'1';btn.innerHTML=on?'&#9825;':'&#9829;';btn.style.color=on?'':'var(--acc)';}
-
-fetch('products.json').then(function(r){return r.json();}).then(function(data){
-  var g=document.getElementById('grid');g.innerHTML='';
-  Object.keys(data).forEach(function(k,i){
-    var p=data[k],bg=BGS[k]||'bwm',bc=BADGES[p.badge]||'bn',svg=SVGS[k]||'';
-    var oldp=p.price_original?'<span class="pro">'+p.price_original+'</span>':'';
-    var a=document.createElement('article');
-    a.className='card r';a.style.transitionDelay=(i*80)+'ms';
-    a.setAttribute('role','link');a.setAttribute('tabindex','0');a.setAttribute('aria-label',p.name);
-    a.innerHTML='<span class="bdg '+bc+'">'+p.badge+'</span>'
-      +'<button class="wsh" data-w="0" aria-label="Wishlist" onclick="toggleWish(event,this)">&#9825;</button>'
-      +'<div class="sw '+bg+'">'+svg+'</div>'
-      +'<div class="cb">'
-      +'<p class="cbr">'+p.brand+'</p>'
-      +'<h3 class="cn">'+p.name+'</h3>'
-      +'<div class="cm"><span class="str">&#9733;&#9733;&#9733;&#9733;&#9733;</span><span>('+p.reviews+')</span></div>'
-      +'<div class="cf"><div><span class="pr">'+p.price+'</span>'+oldp+'</div><span class="ca">Shop Now &rarr;</span></div>'
-      +'</div>';
-    a.addEventListener('click',function(){window.open(p['affiliate-link'],'_blank','noopener,noreferrer');});
-    a.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();window.open(p['affiliate-link'],'_blank','noopener,noreferrer');}});
-    g.appendChild(a);io.observe(a);
+var io = new IntersectionObserver(function (entries) {
+  entries.forEach(function (el) {
+    if (el.isIntersecting) {
+      el.target.classList.add('on');
+      io.unobserve(el.target);
+    }
   });
-}).catch(function(){document.getElementById('grid').innerHTML='<p style="color:var(--mut);padding:var(--s8)">Could not load products.</p>';});
+}, { threshold: 0.1 });
 
-var so=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){var el=e.target,raw=el.dataset.c,num=parseFloat(raw),isF=raw.includes('.');var c=0,s=num/44;(function t(){c=Math.min(c+s,num);el.textContent=isF?c.toFixed(1):Math.round(c);if(c<num)requestAnimationFrame(t);})();so.unobserve(el);}});},{threshold:.5});
-document.querySelectorAll('[data-c]').forEach(function(s){so.observe(s);});
+document.querySelectorAll('.r').forEach(function (el) {
+  io.observe(el);
+});
+
+var SVGS = {
+  'goey-3': '<svg viewBox="0 0 200 140" width="190" fill="none"><ellipse cx="100" cy="130" rx="80" ry="7" fill="rgba(0,0,0,.05)"/><path d="M28 108 Q26 84 52 68 L116 61 Q150 59 166 74 L170 110Z" fill="#f4f1ee"/><path d="M54 68 Q80 56 110 55 L111 71 Q84 73 58 84Z" fill="#E8291C" opacity=".9"/><path d="M128 59 Q150 61 163 74 L161 86 Q144 76 130 75Z" fill="#E8291C" opacity=".55"/><path d="M28 108 Q27 86 40 76 L58 80 Q46 93 44 108Z" fill="#e8e2dc"/><path d="M26 106 Q24 113 28 108 L170 110 Q172 115 168 107Z" fill="#faf9f7" stroke="rgba(0,0,0,.06)" stroke-width=".8"/><path d="M24 115 Q24 121 28 118 L168 116 Q172 116 172 111 L170 110Z" fill="#18160f" opacity=".88"/><line x1="74" y1="78" x2="116" y2="73" stroke="#ccc" stroke-width="1.2" stroke-linecap="round"/><line x1="78" y1="87" x2="120" y2="82" stroke="#ccc" stroke-width="1.2" stroke-linecap="round"/><line x1="83" y1="96" x2="124" y2="91" stroke="#ccc" stroke-width="1.2" stroke-linecap="round"/></svg>',
+  'wade-808-ultra-v2': '<svg viewBox="0 0 200 140" width="190" fill="none"><ellipse cx="100" cy="130" rx="80" ry="7" fill="rgba(0,0,0,.05)"/><path d="M28 108 Q26 82 50 66 L114 58 Q148 56 164 72 L168 110Z" fill="#1a1e2a"/><path d="M52 66 Q78 52 110 51 L110 68 Q82 70 56 82Z" fill="#E8291C" opacity=".9"/><path d="M126 56 Q150 58 161 72 L159 85 Q142 74 128 73Z" fill="#E8291C" opacity=".6"/><path d="M28 108 Q27 84 40 74 L58 78 Q46 92 44 108Z" fill="#242838"/><path d="M26 106 Q24 113 28 108 L168 110 Q172 116 166 107Z" fill="#2a2e3e" stroke="rgba(255,255,255,.06)" stroke-width=".8"/><path d="M24 115 Q24 121 28 118 L166 116 Q170 116 170 111 L168 110Z" fill="#E8291C" opacity=".95"/><line x1="72" y1="76" x2="114" y2="71" stroke="rgba(255,255,255,.2)" stroke-width="1.1" stroke-linecap="round"/><line x1="76" y1="85" x2="118" y2="80" stroke="rgba(255,255,255,.2)" stroke-width="1.1" stroke-linecap="round"/><line x1="81" y1="94" x2="122" y2="89" stroke="rgba(255,255,255,.2)" stroke-width="1.1" stroke-linecap="round"/></svg>',
+  'kai-1': '<svg viewBox="0 0 200 140" width="190" fill="none"><ellipse cx="100" cy="130" rx="80" ry="7" fill="rgba(0,0,0,.05)"/><path d="M28 108 Q26 84 52 68 L116 61 Q150 59 166 74 L170 110Z" fill="#f0f5e8"/><path d="M54 68 Q80 56 110 55 L111 71 Q84 73 58 84Z" fill="#84cc16" opacity=".85"/><path d="M128 59 Q150 61 163 74 L161 86 Q144 76 130 75Z" fill="#84cc16" opacity=".55"/><path d="M28 108 Q27 86 40 76 L58 80 Q46 93 44 108Z" fill="#dce8cc"/><text x="136" y="104" font-size="20" font-weight="900" fill="#84cc16" opacity=".6" font-family="sans-serif">A</text><path d="M26 106 Q24 113 28 108 L170 110 Q172 115 168 107Z" fill="#f8fcf0" stroke="rgba(0,0,0,.05)" stroke-width=".8"/><path d="M24 115 Q24 121 28 118 L168 116 Q172 116 172 111 L170 110Z" fill="#18160f" opacity=".85"/><line x1="74" y1="78" x2="116" y2="73" stroke="#aad06c" stroke-width="1.4" stroke-linecap="round"/><line x1="78" y1="87" x2="120" y2="82" stroke="#aad06c" stroke-width="1.4" stroke-linecap="round"/><line x1="83" y1="96" x2="124" y2="91" stroke="#aad06c" stroke-width="1.4" stroke-linecap="round"/></svg>'
+};
+
+var BGS = {
+  'goey-3': 'bwm',
+  'wade-808-ultra-v2': 'bwk',
+  'kai-1': 'bvv'
+};
+
+var BADGES = {
+  'Hot': 'bh',
+  'New': 'bn',
+  'Collab': 'bc',
+  'Sale': 'bs'
+};
+
+function toggleWish(e, btn) {
+  e.stopPropagation();
+  var on = btn.dataset.w === '1';
+  btn.dataset.w = on ? '0' : '1';
+  btn.innerHTML = on ? '&#9825;' : '&#9829;';
+  btn.style.color = on ? '' : 'var(--acc)';
+}
+
+function getProductVisual(p, key) {
+  if (p.image && p.image.trim() !== '') {
+    return '<img src="' + p.image + '" alt="' + p.name + '" loading="lazy" style="max-width:100%;max-height:100%;object-fit:contain;">';
+  }
+  return SVGS[key] || '';
+}
+
+fetch('products.json')
+  .then(function (r) { return r.json(); })
+  .then(function (data) {
+    var g = document.getElementById('grid');
+    g.innerHTML = '';
+
+    var keys = Object.keys(data);
+    var totalRating = 0;
+
+    keys.forEach(function (k, i) {
+      totalRating += parseFloat(data[k].rating || 0);
+    });
+
+    var avgRating = keys.length ? (totalRating / keys.length).toFixed(1) : '0.0';
+
+    var activeEl = document.querySelector('[data-c="3"]');
+    var avgEl = document.querySelector('[data-c="4.9"]');
+    if (activeEl) activeEl.textContent = keys.length;
+    if (avgEl) avgEl.textContent = avgRating;
+
+    keys.forEach(function (k, i) {
+      var p = data[k];
+      var bg = BGS[k] || 'bwm';
+      var bc = BADGES[p.badge] || 'bn';
+      var visual = getProductVisual(p, k);
+      var oldp = p.price_original ? '<span class="pro">' + p.price_original + '</span>' : '';
+
+      var a = document.createElement('article');
+      a.className = 'card r';
+      a.style.transitionDelay = (i * 80) + 'ms';
+      a.setAttribute('role', 'link');
+      a.setAttribute('tabindex', '0');
+      a.setAttribute('aria-label', p.name);
+
+      a.innerHTML =
+        '<span class="bdg ' + bc + '">' + p.badge + '</span>' +
+        '<button class="wsh" data-w="0" aria-label="Wishlist" onclick="toggleWish(event,this)">&#9825;</button>' +
+        '<div class="sw ' + bg + '">' + visual + '</div>' +
+        '<div class="cb">' +
+          '<p class="cbr">' + p.brand + '</p>' +
+          '<h3 class="cn">' + p.name + '</h3>' +
+          '<div class="cm">' +
+            '<span class="str">&#9733;&#9733;&#9733;&#9733;&#9733;</span>' +
+            '<span>(' + p.reviews + ')</span>' +
+          '</div>' +
+          '<div class="cf">' +
+            '<div><span class="pr">' + p.price + '</span>' + oldp + '</div>' +
+            '<span class="ca">Shop Now &rarr;</span>' +
+          '</div>' +
+        '</div>';
+
+      a.addEventListener('click', function () {
+        window.location.href = p['page-link'];
+      });
+
+      a.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          window.location.href = p['page-link'];
+        }
+      });
+
+      g.appendChild(a);
+      io.observe(a);
+    });
+
+    var existingLd = document.getElementById('homepage-products-ld');
+    if (existingLd) existingLd.remove();
+
+    var ld = {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": "SNKDEAL Sneaker Deals",
+      "itemListElement": keys.map(function (k, i) {
+        var p = data[k];
+        return {
+          "@type": "ListItem",
+          "position": i + 1,
+          "url": 'https://snkdeal.github.io' + p["page-link"],
+          "item": {
+            "@type": "Product",
+            "name": p.name,
+            "brand": {
+              "@type": "Brand",
+              "name": p.brand
+            },
+            "description": p.tagline,
+            "offers": {
+              "@type": "Offer",
+              "price": String(p.price).replace('$', ''),
+              "priceCurrency": "USD",
+              "availability": "https://schema.org/InStock",
+              "url": p["affiliate-link"]
+            }
+          }
+        };
+      })
+    };
+
+    var script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.id = 'homepage-products-ld';
+    script.textContent = JSON.stringify(ld);
+    document.head.appendChild(script);
+  })
+  .catch(function () {
+    document.getElementById('grid').innerHTML =
+      '<p style="color:var(--mut);padding:var(--s8)">Could not load products.</p>';
+  });
+
+var so = new IntersectionObserver(function (entries) {
+  entries.forEach(function (e) {
+    if (e.isIntersecting) {
+      var el = e.target;
+      var raw = el.dataset.c;
+      var num = parseFloat(raw);
+      var isF = raw.includes('.');
+      var c = 0;
+      var s = num / 44;
+      (function t() {
+        c = Math.min(c + s, num);
+        el.textContent = isF ? c.toFixed(1) : Math.round(c);
+        if (c < num) requestAnimationFrame(t);
+      })();
+      so.unobserve(el);
+    }
+  });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('[data-c]').forEach(function (s) {
+  so.observe(s);
+});
 </script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-PFBJ10FFT1"></script>
