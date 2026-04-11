@@ -194,7 +194,7 @@ var BGS={'goey-3':'bwm','wade-808-ultra-v2':'bwk','kai-1':'bvv'};
 fetch('../products.json').then(function(r){return r.json();}).then(function(data){
   var p=data[PRODUCT_ID];
   if(!p)return;
-  document.title='SOLE — '+p.name;
+  document.title='SNKDEAL — '+p.name;
   document.querySelector('meta[name="description"]').content=p.tagline+' — SOLE';
   document.getElementById('crumb-name').textContent=p.name;
   document.getElementById('p-brand').textContent=p.brand;
