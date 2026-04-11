@@ -305,5 +305,14 @@ fetch('products.json').then(function(r){return r.json();}).then(function(data){
 var so=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){var el=e.target,raw=el.dataset.c,num=parseFloat(raw),isF=raw.includes('.');var c=0,s=num/44;(function t(){c=Math.min(c+s,num);el.textContent=isF?c.toFixed(1):Math.round(c);if(c<num)requestAnimationFrame(t);})();so.unobserve(el);}});},{threshold:.5});
 document.querySelectorAll('[data-c]').forEach(function(s){so.observe(s);});
 </script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PFBJ10FFT1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-PFBJ10FFT1');
+</script>
 </body>
 </html>
