@@ -3,8 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SOLE — Loading…</title>
-<meta name="description" content="Sneaker review — SOLE">
+<title>SNKDEAL - Loading…</title>
+<meta name="description" content="Sneaker deal reviewed by @popwiremedia on TikTok.">
+<meta name="author" content="popwiremedia">
+<!-- canonical, OG, Twitter filled dynamically by JS below -->
+<script type="application/ld+json" id="ld-product"></script>
 <link rel="preconnect" href="https://api.fontshare.com">
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=cabinet-grotesk@700,800&display=swap" rel="stylesheet">
 <style>
@@ -164,18 +167,18 @@ img,svg{display:block;max-width:100%}ul{list-style:none}button{cursor:pointer;ba
 
 <footer class="ft" role="contentinfo"><div class="w"><div class="fr">
   <p class="fn">&copy; 2025 SOLE &mdash; <a href="../llms.txt" target="_blank">Affiliate disclosure</a></p>
-  <nav class="fl" aria-label="Footer"><a href="../llms.txt" target="_blank">llms.txt</a><a href="../index.html">All Drops</a><a href="https://www.tiktok.com/@yourusername" target="_blank" rel="noopener noreferrer">TikTok</a></nav>
+  <nav class="fl" aria-label="Footer"><a href="../llms.txt" target="_blank">llms.txt</a><a href="../index.html">All Drops</a><a href="https://www.tiktok.com/@popwiremedia" target="_blank" rel="noopener noreferrer">TikTok</a></nav>
 </div></div></footer>
 
 <script>
-/* ── CHANGE THIS ONE LINE per product page ── */
-// var PRODUCT_ID = 'wade-808-ultra-v2'; // ← 'goey-3' | 'wade-808-ultra-v2' | 'kai-1'
-/* Auto-detect PRODUCT_ID from URL slug — works on GitHub Pages */
+    /* Auto-detect PRODUCT_ID from URL slug — works on GitHub Pages */
 var PRODUCT_ID = (function() {
   var path = window.location.pathname; // e.g. /goey-3/ or /goey-3/index.html
   var parts = path.replace(/\/index\.html$/, '').split('/').filter(Boolean);
   return parts[parts.length - 1] || 'goey-3'; // last non-empty segment
 })();
+/* ── CHANGE THIS ONE LINE per product page ── */
+// var PRODUCT_ID = 'goey-3'; // ← 'goey-3' | 'wade-808-ultra-v2' | 'kai-1'
 
 (function(){var t=document.querySelector('[data-tt]'),r=document.documentElement;var d=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';r.setAttribute('data-theme',d);if(t)t.addEventListener('click',function(){d=d==='dark'?'light':'dark';r.setAttribute('data-theme',d);t.innerHTML=d==='dark'?'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>':'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';});})();
 var io=new IntersectionObserver(function(e){e.forEach(function(el){if(el.isIntersecting){el.target.classList.add('on');io.unobserve(el.target);}});},{threshold:.08});
@@ -223,6 +226,61 @@ fetch('../products.json').then(function(r){return r.json();}).then(function(data
     rg.appendChild(d2);
   });
   document.querySelectorAll('.r').forEach(function(el){io.observe(el);});
+});
+
+// SEO — dynamic meta + structured data
+document.title = p.name + ' Deal — SNKDEAL';
+document.querySelector('meta[name="description"]').content =
+  p.name + ' by ' + p.brand + '. ' + p.tagline + ' Reviewed by @popwiremedia on TikTok. Now ' + p.price + '.';
+
+// Canonical
+var canon = document.createElement('link');
+canon.rel = 'canonical';
+canon.href = 'https://snkdeal.github.io/' + PRODUCT_ID + '/';
+document.head.appendChild(canon);
+
+// Open Graph
+var ogTags = [
+  ['og:type','product'],
+  ['og:title', p.name + ' Deal — SNKDEAL'],
+  ['og:description', p.tagline + ' Reviewed by @popwiremedia. ' + p.price],
+  ['og:url', 'https://snkdeal.github.io/' + PRODUCT_ID + '/'],
+  ['og:site_name', 'SNKDEAL'],
+  ['twitter:card', 'summary_large_image'],
+  ['twitter:site', '@popwiremedia'],
+  ['twitter:title', p.name + ' — ' + p.price],
+  ['twitter:description', p.tagline]
+];
+ogTags.forEach(function(t) {
+  var m = document.createElement('meta');
+  m.setAttribute(t[0].startsWith('twitter') ? 'name' : 'property', t[0]);
+  m.content = t[1]; document.head.appendChild(m);
+});
+
+// JSON-LD Product structured data (helps Google Shopping)
+document.getElementById('ld-product').textContent = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": p.name,
+  "brand": { "@type": "Brand", "name": p.brand },
+  "description": p.tagline,
+  "offers": {
+    "@type": "Offer",
+    "price": p.price.replace('$',''),
+    "priceCurrency": "USD",
+    "availability": "https://schema.org/InStock",
+    "url": p['affiliate-link']
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": p.rating,
+    "reviewCount": p.reviews.replace('k','000')
+  },
+  "author": {
+    "@type": "Person",
+    "name": "popwiremedia",
+    "sameAs": "https://www.tiktok.com/@popwiremedia"
+  }
 });
 </script>
 </body>
