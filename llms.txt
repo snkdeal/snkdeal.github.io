@@ -1,0 +1,23 @@
+# SNKDEAL - Sneaker Deal
+
+> TikTok-reviewed sneaker affiliate deals by @popwiremedia. Hosted on GitHub Pages.
+
+## Creator
+
+TikTok: @popwiremedia — https://www.tiktok.com/@popwiremedia
+Weekly sneaker drop reviews with honest on-feet footage and exclusive affiliate deals.
+
+## Products
+
+- Li-Ning Goey 3 — /goey-3/ — https://vt.tiktok.com/ZSHCpqSSm/
+- Way of Wade 808 Ultra V2 — /wade-808-ultra-v2/ — https://vt.tiktok.com/ZSHCshkGM/
+- Anta Kai 1 — /kai-1/ — https://vt.tiktok.com/ZSHCsc3vY/
+
+## Data
+
+All product data at /products.json — structured for AI and search indexing.
+
+## Affiliate Disclosure
+
+Contains affiliate links. Small commission on qualifying purchases at no extra cost.
+All reviews are independent and honest. &copy; 2025 SNKDEAL by @popwiremedia.

@@ -1,54 +1,308 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" data-theme="light">
 <head>
-  <title>Viral Sneakers 🔥</title>
-  <style>
-    body {
-      background: #0d0d0d;
-      color: white;
-      font-family: Arial;
-      text-align: center;
-    }
-    h1 {
-      color: #00ff99;
-      font-size: 2.5em;
-    }
-    .cta {
-      background: #ff0033;
-      color: white;
-      padding: 15px 25px;
-      font-size: 20px;
-      text-decoration: none;
-      display: inline-block;
-      margin-top: 20px;
-      border-radius: 8px;
-    }
-    .cta:hover {
-      background: #ff3366;
-    }
-    img {
-      width: 80%;
-      max-width: 400px;
-      border-radius: 10px;
-      margin-top: 20px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SNKDEAL - Sneaker Deal | TikTok-Reviewed Kicks</title>
+<meta name="description" content="Handpicked sneaker deals reviewed by @popwiremedia on TikTok. Honest on-feet footage, real sizing guides, and exclusive affiliate prices on Li-Ning, Way of Wade, Anta, and more.">
+<meta name="keywords" content="sneaker deals, basketball shoes, Li-Ning Goey 3, Way of Wade 808, Anta Kai 1, TikTok sneaker review, popwiremedia">
+<meta name="author" content="popwiremedia">
+<link rel="canonical" href="https://snkdeal.github.io/">
+
+<!-- Open Graph (Facebook, Messenger, Discord) -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="SNKDEAL - Sneaker Deal | TikTok-Reviewed Kicks">
+<meta property="og:description" content="Honest sneaker reviews by @popwiremedia. Real on-feet footage and exclusive affiliate deals.">
+<meta property="og:url" content="https://snkdeal.github.io/">
+<meta property="og:site_name" content="SNKDEAL">
+<meta property="og:image" content="https://snkdeal.github.io/og-image.jpg">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@popwiremedia">
+<meta name="twitter:title" content="SNKDEAL - Sneaker Deal">
+<meta name="twitter:description" content="Honest sneaker reviews by @popwiremedia. Exclusive affiliate deals.">
+<meta name="twitter:image" content="https://snkdeal.github.io/og-image.jpg">
+
+<!-- JSON-LD Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "SNKDEAL - Sneaker Deal",
+  "url": "https://snkdeal.github.io/",
+  "description": "TikTok-reviewed sneaker affiliate deals by @popwiremedia",
+  "author": {
+    "@type": "Person",
+    "name": "popwiremedia",
+    "sameAs": "https://www.tiktok.com/@popwiremedia"
+  }
+}
+</script>
+<link rel="preconnect" href="https://api.fontshare.com">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=cabinet-grotesk@700,800&display=swap" rel="stylesheet">
+<style>
+:root,[data-theme="light"]{
+  --fd:'Cabinet Grotesk','Helvetica Neue',sans-serif;
+  --fb:'Satoshi','Inter',sans-serif;
+  --xs:clamp(.75rem,.7rem + .25vw,.875rem);
+  --sm:clamp(.875rem,.8rem + .35vw,1rem);
+  --base:clamp(1rem,.95rem + .25vw,1.125rem);
+  --lg:clamp(1.125rem,1rem + .75vw,1.5rem);
+  --xl:clamp(1.5rem,1.2rem + 1.25vw,2.25rem);
+  --2xl:clamp(2rem,1.2rem + 2.5vw,3.5rem);
+  --3xl:clamp(2.5rem,1rem + 4vw,5rem);
+  --s1:.25rem;--s2:.5rem;--s3:.75rem;--s4:1rem;--s5:1.25rem;
+  --s6:1.5rem;--s8:2rem;--s10:2.5rem;--s12:3rem;--s16:4rem;--s20:5rem;
+  --bg:#f5f4f0;--sur:#faf9f7;--sur2:#fff;--suro:#edeae4;
+  --bdr:rgba(28,22,10,.09);--txt:#18160f;--mut:#68655e;--fnt:#b2b0aa;
+  --acc:#E8291C;--acch:#c41e13;--accbg:rgba(232,41,28,.07);
+  --rsm:.375rem;--rmd:.5rem;--rlg:.75rem;--rxl:1rem;--r2xl:1.5rem;--rf:9999px;
+  --sh1:0 1px 3px rgba(20,14,4,.06);
+  --sh2:0 4px 18px rgba(20,14,4,.09);
+  --sh3:0 14px 44px rgba(20,14,4,.13);
+  --tr:180ms cubic-bezier(.16,1,.3,1);--w:1160px;
+}
+[data-theme="dark"]{
+  --bg:#111010;--sur:#181715;--sur2:#1f1e1c;--suro:#252320;
+  --bdr:rgba(255,250,235,.08);--txt:#e2e0da;--mut:#7a7870;--fnt:#4a4845;
+  --acc:#FF4438;--acch:#FF3B2F;--accbg:rgba(255,68,56,.09);
+  --sh1:0 1px 3px rgba(0,0,0,.22);--sh2:0 4px 18px rgba(0,0,0,.32);--sh3:0 14px 44px rgba(0,0,0,.48);
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme]){
+  --bg:#111010;--sur:#181715;--sur2:#1f1e1c;--suro:#252320;
+  --bdr:rgba(255,250,235,.08);--txt:#e2e0da;--mut:#7a7870;--fnt:#4a4845;
+  --acc:#FF4438;--acch:#FF3B2F;--accbg:rgba(255,68,56,.09);
+  --sh1:0 1px 3px rgba(0,0,0,.22);--sh2:0 4px 18px rgba(0,0,0,.32);--sh3:0 14px 44px rgba(0,0,0,.48);
+}}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth;scroll-padding-top:72px}
+body{font-family:var(--fb);font-size:var(--base);color:var(--txt);background:var(--bg);min-height:100dvh}
+img,svg{display:block;max-width:100%}ul{list-style:none}
+button{cursor:pointer;background:none;border:none;font:inherit;color:inherit}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,h4{font-family:var(--fd);line-height:1.08;text-wrap:balance}
+p{text-wrap:pretty}::selection{background:var(--accbg)}
+:focus-visible{outline:2px solid var(--acc);outline-offset:3px;border-radius:var(--rsm)}
+a,button{transition:color var(--tr),background var(--tr),box-shadow var(--tr),transform var(--tr)}
+.w{max-width:var(--w);margin-inline:auto;padding-inline:clamp(var(--s4),4vw,var(--s8))}
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;background:color-mix(in oklab,var(--bg) 82%,transparent);backdrop-filter:blur(20px) saturate(1.5);-webkit-backdrop-filter:blur(20px) saturate(1.5);border-bottom:1px solid var(--bdr)}
+.nr{display:flex;align-items:center;justify-content:space-between;padding-block:var(--s4);gap:var(--s4)}
+.logo{display:flex;align-items:center;gap:var(--s2);font-family:var(--fd);font-size:var(--lg);font-weight:800;letter-spacing:-.025em}
+.na{display:flex;align-items:center;gap:var(--s3)}
+.bti{width:38px;height:38px;display:flex;align-items:center;justify-content:center;border-radius:var(--rmd);color:var(--mut)}
+.bti:hover{color:var(--txt);background:var(--suro)}
+.btp{display:inline-flex;align-items:center;gap:var(--s2);background:var(--txt);color:var(--bg);padding:var(--s2) var(--s5);border-radius:var(--rf);font-size:var(--sm);font-weight:700}
+.btp:hover{background:var(--acc);transform:translateY(-1px);box-shadow:var(--sh2)}
+/* HERO */
+.hero{padding-block:clamp(var(--s12),8vw,var(--s20))}
+.hi{display:grid;grid-template-columns:1fr 1fr;gap:var(--s12);align-items:center}
+.ey{display:inline-flex;align-items:center;gap:var(--s2);background:var(--accbg);color:var(--acc);padding:var(--s1) var(--s3);border-radius:var(--rf);font-size:var(--xs);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:var(--s5)}
+.hero h1{font-size:var(--3xl);font-weight:800;letter-spacing:-.035em;margin-bottom:var(--s5)}
+.hero h1 em{font-style:italic;color:var(--acc)}
+.hs{font-size:var(--lg);color:var(--mut);max-width:40ch;margin-bottom:var(--s8);line-height:1.5}
+.cr{display:flex;gap:var(--s3);flex-wrap:wrap}
+.bp{display:inline-flex;align-items:center;gap:var(--s2);background:var(--acc);color:#fff;padding:var(--s3) var(--s6);border-radius:var(--rf);font-size:var(--sm);font-weight:700}
+.bp:hover{background:var(--acch);transform:translateY(-2px);box-shadow:0 8px 28px rgba(232,41,28,.3)}
+.bo{display:inline-flex;align-items:center;gap:var(--s2);border:1px solid var(--bdr);padding:var(--s3) var(--s6);border-radius:var(--rf);font-size:var(--sm);font-weight:600;color:var(--mut)}
+.bo:hover{border-color:var(--txt);color:var(--txt);transform:translateY(-1px)}
+.stg{width:100%;max-width:460px;aspect-ratio:1;border-radius:var(--r2xl);background:radial-gradient(ellipse at 60% 35%,var(--suro) 0%,var(--bg) 72%);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.stg::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 68% 28%,rgba(232,41,28,.08) 0%,transparent 58%)}
+/* STATS */
+.sts{background:var(--sur);border-top:1px solid var(--bdr);border-bottom:1px solid var(--bdr);padding-block:var(--s5)}
+.sr{display:flex;justify-content:space-around;flex-wrap:wrap;gap:var(--s5)}
+.st{text-align:center}
+.sn{font-family:var(--fd);font-size:var(--xl);font-weight:800}
+.sn span{color:var(--acc)}
+.sl{font-size:var(--xs);color:var(--mut);text-transform:uppercase;letter-spacing:.07em;margin-top:2px}
+/* SECTION HD */
+.sh{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:var(--s8);flex-wrap:wrap;gap:var(--s4)}
+.se{font-size:var(--xs);font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);margin-bottom:var(--s2)}
+.st2{font-size:var(--2xl);font-weight:800;letter-spacing:-.025em}
+.sa{font-size:var(--sm);font-weight:600;color:var(--mut);display:flex;align-items:center;gap:4px;white-space:nowrap}
+.sa:hover{color:var(--acc)}
+/* PRODUCTS */
+.prods{padding-block:clamp(var(--s12),6vw,var(--s20))}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:var(--s5)}
+/* CARD */
+.card{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r2xl);overflow:hidden;cursor:pointer;position:relative;display:flex;flex-direction:column;transition:transform var(--tr),box-shadow var(--tr)}
+.card:hover{transform:translateY(-6px);box-shadow:var(--sh3)}
+.card:hover .ca{background:var(--acc);color:#fff;border-color:transparent}
+.card:hover .sw svg{transform:scale(1.06) rotate(-3deg)}
+.bdg{position:absolute;top:var(--s3);left:var(--s3);z-index:2;font-size:var(--xs);font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 11px;border-radius:var(--rf)}
+.bh{background:var(--acc);color:#fff}
+.bn{background:var(--txt);color:var(--bg)}
+.bc{background:#6d28d9;color:#fff}
+.bs{background:#15803d;color:#fff}
+.wsh{position:absolute;top:var(--s3);right:var(--s3);z-index:2;width:34px;height:34px;border-radius:var(--rf);background:var(--sur2);border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;font-size:14px;transition:background var(--tr),transform var(--tr)}
+.wsh:hover{background:var(--accbg);transform:scale(1.1)}
+.sw{aspect-ratio:1;display:flex;align-items:center;justify-content:center;padding:var(--s6)}
+.sw svg{transition:transform 320ms cubic-bezier(.16,1,.3,1)}
+.cb{padding:var(--s4) var(--s5) var(--s5);display:flex;flex-direction:column;flex:1}
+.cbr{font-size:var(--xs);font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--fnt);margin-bottom:var(--s1)}
+.cn{font-family:var(--fd);font-size:var(--lg);font-weight:700;letter-spacing:-.01em;margin-bottom:var(--s2);line-height:1.15}
+.cm{display:flex;align-items:center;gap:var(--s2);margin-bottom:var(--s4);font-size:var(--xs);color:var(--mut)}
+.str{color:#f59e0b;letter-spacing:1px}
+.cf{display:flex;align-items:center;justify-content:space-between;margin-top:auto}
+.pr{font-family:var(--fd);font-size:var(--lg);font-weight:800}
+.pro{font-size:var(--xs);color:var(--fnt);text-decoration:line-through;margin-left:var(--s1)}
+.ca{display:inline-flex;align-items:center;gap:4px;border:1.5px solid var(--bdr);border-radius:var(--rf);padding:var(--s2) var(--s4);font-size:var(--xs);font-weight:700;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;transition:background var(--tr),color var(--tr),border-color var(--tr)}
+.bwm{background:radial-gradient(circle at 55% 40%,#f5ece4 0%,var(--sur) 68%)}
+.bwk{background:radial-gradient(circle at 55% 40%,#e4e8f0 0%,var(--sur) 68%)}
+.bvv{background:radial-gradient(circle at 55% 40%,#eef5e4 0%,var(--sur) 68%)}
+[data-theme="dark"] .bwm{background:radial-gradient(circle at 55% 40%,#2a2320 0%,var(--sur) 68%)}
+[data-theme="dark"] .bwk{background:radial-gradient(circle at 55% 40%,#1e2228 0%,var(--sur) 68%)}
+[data-theme="dark"] .bvv{background:radial-gradient(circle at 55% 40%,#20281e 0%,var(--sur) 68%)}
+/* TT */
+.tt{background:var(--sur);border-top:1px solid var(--bdr);border-bottom:1px solid var(--bdr);padding-block:var(--s12)}
+.tti{text-align:center}
+.tti h2{font-size:var(--xl);font-weight:800;margin-bottom:var(--s3)}
+.tti p{color:var(--mut);max-width:50ch;margin-inline:auto;margin-bottom:var(--s6)}
+.btt{display:inline-flex;align-items:center;gap:var(--s3);background:#010101;color:#fff;padding:var(--s3) var(--s8);border-radius:var(--rf);font-size:var(--base);font-weight:700;box-shadow:var(--sh2)}
+.btt:hover{background:var(--acc);transform:translateY(-2px)}
+/* FOOTER */
+.ft{padding-block:var(--s8);border-top:1px solid var(--bdr)}
+.fr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--s4)}
+.fn{font-size:var(--xs);color:var(--fnt)}.fn a{color:var(--acc)}
+.fl{display:flex;gap:var(--s5)}.fl a{font-size:var(--xs);color:var(--mut)}.fl a:hover{color:var(--txt)}
+/* REVEAL */
+.r{opacity:0;transform:translateY(22px);transition:opacity .5s ease,transform .5s ease}
+.r.on{opacity:1;transform:none}
+@media(max-width:768px){.hi{grid-template-columns:1fr}.stg{display:none}.fr{flex-direction:column;text-align:center}}
+</style>
 </head>
 <body>
 
-<h1>🔥 THESE SNEAKERS ARE GOING VIRAL</h1>
+<nav class="nav" role="navigation" aria-label="Main">
+  <div class="w">
+    <div class="nr">
+      <a href="index.html" class="logo" aria-label="SOLE home">
+        <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+          <rect width="26" height="26" rx="5" fill="currentColor"/>
+          <path d="M5 17 Q9 7 15 9 Q19 10 17 14 Q15 18 9 19" stroke="var(--bg)" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <circle cx="19" cy="9" r="1.8" fill="var(--acc)"/>
+        </svg>
+        SOLE
+      </a>
+      <div class="na">
+        <button class="bti" data-tt aria-label="Toggle theme">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        </button>
+        <a href="https://www.tiktok.com/@popwiremedia" target="_blank" rel="noopener noreferrer" class="btp">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.22 8.22 0 004.81 1.54V6.79a4.85 4.85 0 01-1.04-.1z"/></svg>
+          Follow
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
 
-<p>Over 2M views on TikTok 👀</p>
+<main id="main">
+<section class="hero" aria-labelledby="h1">
+  <div class="w"><div class="hi">
+    <div>
+      <div class="ey r"><svg width="7" height="7" viewBox="0 0 7 7"><circle cx="3.5" cy="3.5" r="3.5" fill="currentColor"/></svg>New Drops Weekly</div>
+      <h1 id="h1" class="r">Kicks That<br><em>Hit Different.</em></h1>
+      <p class="hs r">Handpicked basketball sneakers reviewed on TikTok. Real on-feet footage, honest sizing, best affiliate prices.</p>
+      <div class="cr r">
+        <a href="#products" class="bp">Shop Drops <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        <a href="https://www.tiktok.com/@popwiremedia" target="_blank" rel="noopener noreferrer" class="bo">Watch on TikTok <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg></a>
+      </div>
+    </div>
+    <div class="stg r" aria-hidden="true">
+      <svg viewBox="0 0 340 230" width="300" fill="none">
+        <ellipse cx="170" cy="214" rx="132" ry="14" fill="var(--suro)" opacity=".5"/>
+        <path d="M48 188 Q46 154 72 134 L146 124 Q182 120 202 138 L206 190Z" fill="var(--sur2)" stroke="var(--bdr)" stroke-width="1"/>
+        <path d="M74 134 Q106 118 140 114 L141 134 Q110 137 78 154Z" fill="var(--acc)" opacity=".88"/>
+        <path d="M162 118 Q196 120 200 136 L198 154 Q180 140 164 138Z" fill="var(--acc)" opacity=".55"/>
+        <path d="M48 188 Q47 162 62 148 L80 152 Q66 168 64 188Z" fill="var(--suro)"/>
+        <path d="M46 184 Q44 194 48 188 L206 190 Q210 197 204 184Z" fill="var(--sur2)" stroke="var(--bdr)" stroke-width=".8"/>
+        <path d="M44 196 Q44 204 48 201 L204 198 Q208 198 208 192 L206 190Z" fill="var(--txt)" opacity=".84"/>
+        <line x1="96" y1="150" x2="150" y2="143" stroke="var(--fnt)" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="100" y1="160" x2="154" y2="153" stroke="var(--fnt)" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="105" y1="170" x2="158" y2="163" stroke="var(--fnt)" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div></div>
+</section>
 
-<img src="assets/shoe.jpg">
+<div class="sts"><div class="w"><div class="sr">
+  <div class="st r"><div class="sn"><span data-c="50">50</span>K+</div><div class="sl">TikTok Followers</div></div>
+  <div class="st r"><div class="sn"><span data-c="3">3</span> Active</div><div class="sl">Reviewed Drops</div></div>
+  <div class="st r"><div class="sn"><span data-c="4.9">4.9</span>★</div><div class="sl">Avg Rating</div></div>
+  <div class="st r"><div class="sn"><span data-c="100">100</span>%</div><div class="sl">Honest Reviews</div></div>
+</div></div></div>
 
-<p>Everyone is grabbing these before they sell out...</p>
+<section class="prods" id="products" aria-labelledby="pt">
+  <div class="w">
+    <div class="sh r">
+      <div><p class="se">Curated Drops</p><h2 class="st2" id="pt">This Week's Picks</h2></div>
+      <a href="https://www.tiktok.com/@popwiremedia" target="_blank" rel="noopener noreferrer" class="sa">All TikTok Reviews &rarr;</a>
+    </div>
+    <div class="grid" id="grid"><p style="color:var(--mut);padding:var(--s8)">Loading products…</p></div>
+  </div>
+</section>
 
-<a class="cta" href="YOUR_TIKTOK_AFFILIATE_LINK" target="_blank">
-GET THEM NOW →
-</a>
+<section class="tt" aria-labelledby="tth">
+  <div class="w"><div class="tti r">
+    <p class="se" style="display:block;margin-bottom:var(--s3)">Our Community</p>
+    <h2 id="tth">Watch Before You Buy</h2>
+    <p>Every product has a dedicated TikTok review — on-feet footage, sizing guides, and exclusive affiliate discounts.</p>
+    <a href="https://www.tiktok.com/@popwiremedia" target="_blank" rel="noopener noreferrer" class="btt">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.22 8.22 0 004.81 1.54V6.79a4.85 4.85 0 01-1.04-.1z"/></svg>
+      Open TikTok Reviews
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div></div>
+</section>
+</main>
 
-<p style="margin-top:40px;">⚠️ Limited stock – don’t wait</p>
+<footer class="ft" role="contentinfo"><div class="w"><div class="fr">
+  <p class="fn">&copy; 2025 SOLE &mdash; Contains <a href="llms.txt" target="_blank">affiliate links</a>. Small commission, no extra cost to you.</p>
+  <nav class="fl" aria-label="Footer"><a href="llms.txt" target="_blank">llms.txt</a><a href="#products">Drops</a><a href="https://www.tiktok.com/@popwiremedia" target="_blank" rel="noopener noreferrer">TikTok</a></nav>
+</div></div></footer>
 
+<script>
+(function(){var t=document.querySelector('[data-tt]'),r=document.documentElement;var d=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';r.setAttribute('data-theme',d);if(t)t.addEventListener('click',function(){d=d==='dark'?'light':'dark';r.setAttribute('data-theme',d);t.innerHTML=d==='dark'?'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>':'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';});})();
+var io=new IntersectionObserver(function(e){e.forEach(function(el){if(el.isIntersecting){el.target.classList.add('on');io.unobserve(el.target);}});},{threshold:.1});
+document.querySelectorAll('.r').forEach(function(el){io.observe(el);});
+
+var SVGS={
+  'goey-3':'<svg viewBox="0 0 200 140" width="190" fill="none"><ellipse cx="100" cy="130" rx="80" ry="7" fill="rgba(0,0,0,.05)"/><path d="M28 108 Q26 84 52 68 L116 61 Q150 59 166 74 L170 110Z" fill="#f4f1ee"/><path d="M54 68 Q80 56 110 55 L111 71 Q84 73 58 84Z" fill="#E8291C" opacity=".9"/><path d="M128 59 Q150 61 163 74 L161 86 Q144 76 130 75Z" fill="#E8291C" opacity=".55"/><path d="M28 108 Q27 86 40 76 L58 80 Q46 93 44 108Z" fill="#e8e2dc"/><path d="M26 106 Q24 113 28 108 L170 110 Q172 115 168 107Z" fill="#faf9f7" stroke="rgba(0,0,0,.06)" stroke-width=".8"/><path d="M24 115 Q24 121 28 118 L168 116 Q172 116 172 111 L170 110Z" fill="#18160f" opacity=".88"/><line x1="74" y1="78" x2="116" y2="73" stroke="#ccc" stroke-width="1.2" stroke-linecap="round"/><line x1="78" y1="87" x2="120" y2="82" stroke="#ccc" stroke-width="1.2" stroke-linecap="round"/><line x1="83" y1="96" x2="124" y2="91" stroke="#ccc" stroke-width="1.2" stroke-linecap="round"/></svg>',
+  'wade-808-ultra-v2':'<svg viewBox="0 0 200 140" width="190" fill="none"><ellipse cx="100" cy="130" rx="80" ry="7" fill="rgba(0,0,0,.05)"/><path d="M28 108 Q26 82 50 66 L114 58 Q148 56 164 72 L168 110Z" fill="#1a1e2a"/><path d="M52 66 Q78 52 110 51 L110 68 Q82 70 56 82Z" fill="#E8291C" opacity=".9"/><path d="M126 56 Q150 58 161 72 L159 85 Q142 74 128 73Z" fill="#E8291C" opacity=".6"/><path d="M28 108 Q27 84 40 74 L58 78 Q46 92 44 108Z" fill="#242838"/><path d="M26 106 Q24 113 28 108 L168 110 Q172 116 166 107Z" fill="#2a2e3e" stroke="rgba(255,255,255,.06)" stroke-width=".8"/><path d="M24 115 Q24 121 28 118 L166 116 Q170 116 170 111 L168 110Z" fill="#E8291C" opacity=".95"/><line x1="72" y1="76" x2="114" y2="71" stroke="rgba(255,255,255,.2)" stroke-width="1.1" stroke-linecap="round"/><line x1="76" y1="85" x2="118" y2="80" stroke="rgba(255,255,255,.2)" stroke-width="1.1" stroke-linecap="round"/><line x1="81" y1="94" x2="122" y2="89" stroke="rgba(255,255,255,.2)" stroke-width="1.1" stroke-linecap="round"/></svg>',
+  'kai-1':'<svg viewBox="0 0 200 140" width="190" fill="none"><ellipse cx="100" cy="130" rx="80" ry="7" fill="rgba(0,0,0,.05)"/><path d="M28 108 Q26 84 52 68 L116 61 Q150 59 166 74 L170 110Z" fill="#f0f5e8"/><path d="M54 68 Q80 56 110 55 L111 71 Q84 73 58 84Z" fill="#84cc16" opacity=".85"/><path d="M128 59 Q150 61 163 74 L161 86 Q144 76 130 75Z" fill="#84cc16" opacity=".55"/><path d="M28 108 Q27 86 40 76 L58 80 Q46 93 44 108Z" fill="#dce8cc"/><text x="136" y="104" font-size="20" font-weight="900" fill="#84cc16" opacity=".6" font-family="sans-serif">A</text><path d="M26 106 Q24 113 28 108 L170 110 Q172 115 168 107Z" fill="#f8fcf0" stroke="rgba(0,0,0,.05)" stroke-width=".8"/><path d="M24 115 Q24 121 28 118 L168 116 Q172 116 172 111 L170 110Z" fill="#18160f" opacity=".85"/><line x1="74" y1="78" x2="116" y2="73" stroke="#aad06c" stroke-width="1.4" stroke-linecap="round"/><line x1="78" y1="87" x2="120" y2="82" stroke="#aad06c" stroke-width="1.4" stroke-linecap="round"/><line x1="83" y1="96" x2="124" y2="91" stroke="#aad06c" stroke-width="1.4" stroke-linecap="round"/></svg>'
+};
+var BGS={'goey-3':'bwm','wade-808-ultra-v2':'bwk','kai-1':'bvv'};
+var BADGES={'Hot':'bh','New':'bn','Collab':'bc','Sale':'bs'};
+
+function toggleWish(e,btn){e.stopPropagation();var on=btn.dataset.w==='1';btn.dataset.w=on?'0':'1';btn.innerHTML=on?'&#9825;':'&#9829;';btn.style.color=on?'':'var(--acc)';}
+
+fetch('products.json').then(function(r){return r.json();}).then(function(data){
+  var g=document.getElementById('grid');g.innerHTML='';
+  Object.keys(data).forEach(function(k,i){
+    var p=data[k],bg=BGS[k]||'bwm',bc=BADGES[p.badge]||'bn',svg=SVGS[k]||'';
+    var oldp=p.price_original?'<span class="pro">'+p.price_original+'</span>':'';
+    var a=document.createElement('article');
+    a.className='card r';a.style.transitionDelay=(i*80)+'ms';
+    a.setAttribute('role','link');a.setAttribute('tabindex','0');a.setAttribute('aria-label',p.name);
+    a.innerHTML='<span class="bdg '+bc+'">'+p.badge+'</span>'
+      +'<button class="wsh" data-w="0" aria-label="Wishlist" onclick="toggleWish(event,this)">&#9825;</button>'
+      +'<div class="sw '+bg+'">'+svg+'</div>'
+      +'<div class="cb">'
+      +'<p class="cbr">'+p.brand+'</p>'
+      +'<h3 class="cn">'+p.name+'</h3>'
+      +'<div class="cm"><span class="str">&#9733;&#9733;&#9733;&#9733;&#9733;</span><span>('+p.reviews+')</span></div>'
+      +'<div class="cf"><div><span class="pr">'+p.price+'</span>'+oldp+'</div><span class="ca">Shop Now &rarr;</span></div>'
+      +'</div>';
+    a.addEventListener('click',function(){window.open(p['affiliate-link'],'_blank','noopener,noreferrer');});
+    a.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();window.open(p['affiliate-link'],'_blank','noopener,noreferrer');}});
+    g.appendChild(a);io.observe(a);
+  });
+}).catch(function(){document.getElementById('grid').innerHTML='<p style="color:var(--mut);padding:var(--s8)">Could not load products.</p>';});
+
+var so=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){var el=e.target,raw=el.dataset.c,num=parseFloat(raw),isF=raw.includes('.');var c=0,s=num/44;(function t(){c=Math.min(c+s,num);el.textContent=isF?c.toFixed(1):Math.round(c);if(c<num)requestAnimationFrame(t);})();so.unobserve(el);}});},{threshold:.5});
+document.querySelectorAll('[data-c]').forEach(function(s){so.observe(s);});
+</script>
 </body>
 </html>
