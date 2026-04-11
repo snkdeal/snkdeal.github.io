@@ -116,9 +116,9 @@ img,svg{display:block;max-width:100%}ul{list-style:none}button{cursor:pointer;ba
 
 <nav class="nav" role="navigation" aria-label="Main">
   <div class="w"><div class="nr">
-    <a href="../index.html" class="logo" aria-label="SOLE home">
+    <a href="../index.html" class="logo" aria-label="SNKDEAL home">
       <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true"><rect width="26" height="26" rx="5" fill="currentColor"/><path d="M5 17 Q9 7 15 9 Q19 10 17 14 Q15 18 9 19" stroke="var(--bg)" stroke-width="2" stroke-linecap="round" fill="none"/><circle cx="19" cy="9" r="1.8" fill="var(--acc)"/></svg>
-      SOLE
+      SNKDEAL
     </a>
     <div class="na">
       <button class="bti" data-tt aria-label="Toggle theme"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></button>
@@ -166,7 +166,7 @@ img,svg{display:block;max-width:100%}ul{list-style:none}button{cursor:pointer;ba
 </main>
 
 <footer class="ft" role="contentinfo"><div class="w"><div class="fr">
-  <p class="fn">&copy; 2025 SOLE &mdash; <a href="../llms.txt" target="_blank">Affiliate disclosure</a></p>
+  <p class="fn">&copy; 2026 SNKDEAL &mdash; <a href="../llms.txt" target="_blank">Affiliate disclosure</a></p>
   <nav class="fl" aria-label="Footer"><a href="../llms.txt" target="_blank">llms.txt</a><a href="../index.html">All Drops</a><a href="https://www.tiktok.com/@popwiremedia" target="_blank" rel="noopener noreferrer">TikTok</a></nav>
 </div></div></footer>
 
@@ -195,7 +195,7 @@ fetch('../products.json').then(function(r){return r.json();}).then(function(data
   var p=data[PRODUCT_ID];
   if(!p)return;
   document.title='SNKDEAL — '+p.name;
-  document.querySelector('meta[name="description"]').content=p.tagline+' — SOLE';
+  document.querySelector('meta[name="description"]').content=p.tagline+' — SNKDEAL';
   document.getElementById('crumb-name').textContent=p.name;
   document.getElementById('p-brand').textContent=p.brand;
   document.getElementById('h1').textContent=p.name;
