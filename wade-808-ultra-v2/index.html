@@ -1,449 +1,431 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SNKDEAL - Loading…</title>
-<meta name="description" content="Sneaker deal reviewed by @popwiremedia on TikTok.">
-<meta name="author" content="popwiremedia">
-<!-- canonical, OG, Twitter filled dynamically by JS below -->
-<script type="application/ld+json" id="ld-product"></script>
-<link rel="preconnect" href="https://api.fontshare.com">
-<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=cabinet-grotesk@700,800&display=swap" rel="stylesheet">
-<style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Sneaker Deal Review | SNKDEAL</title>
+  <meta name="description" content="Sneaker deals, reviews, prices, and TikTok picks from SNKDEAL.">
+  <meta name="author" content="popwiremedia">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <meta name="theme-color" content="#f5f4f0">
+
+  <link rel="canonical" href="https://snkdeal.github.io/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Sneaker Deal Review | SNKDEAL">
+  <meta property="og:description" content="Sneaker deals, reviews, prices, and TikTok picks from SNKDEAL.">
+  <meta property="og:url" content="https://snkdeal.github.io/">
+  <meta property="og:site_name" content="SNKDEAL">
+  <meta property="og:image" content="https://snkdeal.github.io/og-image.jpg">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@popwiremedia">
+  <meta name="twitter:title" content="Sneaker Deal Review | SNKDEAL">
+  <meta name="twitter:description" content="Sneaker deals, reviews, prices, and TikTok picks from SNKDEAL.">
+  <meta name="twitter:image" content="https://snkdeal.github.io/og-image.jpg">
+
+  <script type="application/ld+json" id="ld-site">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "SNKDEAL",
+    "url": "https://snkdeal.github.io/"
+  }
+  </script>
+
+  <script type="application/ld+json" id="ld-org">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "SNKDEAL",
+    "url": "https://snkdeal.github.io/",
+    "sameAs": ["https://www.tiktok.com/@popwiremedia"]
+  }
+  </script>
+
+  <script type="application/ld+json" id="ld-product"></script>
+  <script type="application/ld+json" id="ld-breadcrumb"></script>
+
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=cabinet-grotesk@700,800&display=swap" rel="stylesheet">
+
+  <style>
     .stg img,
-.ms img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
-}
-:root,[data-theme="light"]{
-  --fd:'Cabinet Grotesk','Helvetica Neue',sans-serif;--fb:'Satoshi','Inter',sans-serif;
-  --xs:clamp(.75rem,.7rem + .25vw,.875rem);--sm:clamp(.875rem,.8rem + .35vw,1rem);
-  --base:clamp(1rem,.95rem + .25vw,1.125rem);--lg:clamp(1.125rem,1rem + .75vw,1.5rem);
-  --xl:clamp(1.5rem,1.2rem + 1.25vw,2.25rem);--2xl:clamp(2rem,1.2rem + 2.5vw,3.5rem);
-  --s1:.25rem;--s2:.5rem;--s3:.75rem;--s4:1rem;--s5:1.25rem;
-  --s6:1.5rem;--s8:2rem;--s10:2.5rem;--s12:3rem;--s16:4rem;
-  --bg:#f5f4f0;--sur:#faf9f7;--sur2:#fff;--suro:#edeae4;
-  --bdr:rgba(28,22,10,.09);--txt:#18160f;--mut:#68655e;--fnt:#b2b0aa;
-  --acc:#E8291C;--acch:#c41e13;--accbg:rgba(232,41,28,.07);
-  --rsm:.375rem;--rmd:.5rem;--rlg:.75rem;--rxl:1rem;--r2xl:1.5rem;--rf:9999px;
-  --sh1:0 1px 3px rgba(20,14,4,.06);--sh2:0 4px 18px rgba(20,14,4,.09);--sh3:0 14px 44px rgba(20,14,4,.13);
-  --tr:180ms cubic-bezier(.16,1,.3,1);--w:1100px;
-}
-[data-theme="dark"]{
-  --bg:#111010;--sur:#181715;--sur2:#1f1e1c;--suro:#252320;
-  --bdr:rgba(255,250,235,.08);--txt:#e2e0da;--mut:#7a7870;--fnt:#4a4845;
-  --acc:#FF4438;--acch:#FF3B2F;--accbg:rgba(255,68,56,.09);
-  --sh1:0 1px 3px rgba(0,0,0,.22);--sh2:0 4px 18px rgba(0,0,0,.32);--sh3:0 14px 44px rgba(0,0,0,.48);
-}
-@media(prefers-color-scheme:dark){:root:not([data-theme]){--bg:#111010;--sur:#181715;--sur2:#1f1e1c;--suro:#252320;--bdr:rgba(255,250,235,.08);--txt:#e2e0da;--mut:#7a7870;--fnt:#4a4845;--acc:#FF4438;--acch:#FF3B2F;--accbg:rgba(255,68,56,.09);--sh1:0 1px 3px rgba(0,0,0,.22);--sh2:0 4px 18px rgba(0,0,0,.32);--sh3:0 14px 44px rgba(0,0,0,.48);}}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
-body{font-family:var(--fb);font-size:var(--base);color:var(--txt);background:var(--bg);min-height:100dvh}
-img,svg{display:block;max-width:100%}ul{list-style:none}button{cursor:pointer;background:none;border:none;font:inherit;color:inherit}a{color:inherit;text-decoration:none}h1,h2,h3{font-family:var(--fd);line-height:1.08;text-wrap:balance}p{text-wrap:pretty}:focus-visible{outline:2px solid var(--acc);outline-offset:3px;border-radius:var(--rsm)}a,button{transition:color var(--tr),background var(--tr),box-shadow var(--tr),transform var(--tr)}
-.w{max-width:var(--w);margin-inline:auto;padding-inline:clamp(var(--s4),4vw,var(--s8))}
-/* NAV */
-.nav{position:sticky;top:0;z-index:100;background:color-mix(in oklab,var(--bg) 82%,transparent);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);border-bottom:1px solid var(--bdr)}
-.nr{display:flex;align-items:center;justify-content:space-between;padding-block:var(--s4);gap:var(--s4)}
-.logo{display:flex;align-items:center;gap:var(--s2);font-family:var(--fd);font-size:var(--lg);font-weight:800;letter-spacing:-.025em}
-.na{display:flex;align-items:center;gap:var(--s3)}
-.bti{width:38px;height:38px;display:flex;align-items:center;justify-content:center;border-radius:var(--rmd);color:var(--mut)}.bti:hover{color:var(--txt);background:var(--suro)}
-.bbk{display:inline-flex;align-items:center;gap:var(--s2);font-size:var(--sm);font-weight:600;color:var(--mut);padding:var(--s2) var(--s4);border-radius:var(--rf);border:1px solid var(--bdr)}.bbk:hover{color:var(--txt);border-color:var(--txt)}
-/* BREADCRUMB */
-.crumb{padding-block:var(--s4);font-size:var(--xs);color:var(--mut)}.crumb a{color:var(--mut)}.crumb a:hover{color:var(--acc)}.crumb span{color:var(--fnt);margin-inline:var(--s2)}
-/* PRODUCT */
-.prod{padding-bottom:clamp(var(--s12),6vw,var(--s20))}
-.pg{display:grid;grid-template-columns:1fr 1fr;gap:clamp(var(--s8),5vw,var(--s16));align-items:start}
-/* STAGE */
-.stg{border-radius:var(--r2xl);aspect-ratio:1;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
-.stg::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 65% 30%,rgba(232,41,28,.09) 0%,transparent 60%)}
-.bwm{background:radial-gradient(circle at 55% 40%,#f5ece4 0%,var(--sur) 68%)}
-.bwk{background:radial-gradient(circle at 55% 40%,#e4e8f0 0%,var(--sur) 68%)}
-.bvv{background:radial-gradient(circle at 55% 40%,#eef5e4 0%,var(--sur) 68%)}
-[data-theme="dark"] .bwm{background:radial-gradient(circle at 55% 40%,#2a2320 0%,var(--sur) 68%)}
-[data-theme="dark"] .bwk{background:radial-gradient(circle at 55% 40%,#1e2228 0%,var(--sur) 68%)}
-[data-theme="dark"] .bvv{background:radial-gradient(circle at 55% 40%,#20281e 0%,var(--sur) 68%)}
-/* INFO */
-.pey{font-size:var(--xs);font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);margin-bottom:var(--s3)}
-.pn{font-size:var(--2xl);font-weight:800;letter-spacing:-.03em;margin-bottom:var(--s4);line-height:1.0}
-.pt{font-size:var(--lg);color:var(--mut);margin-bottom:var(--s5);line-height:1.4}
-.mr{display:flex;align-items:center;gap:var(--s4);margin-bottom:var(--s6);font-size:var(--sm);flex-wrap:wrap}
-.str{color:#f59e0b;letter-spacing:1px}
-.mc{background:var(--suro);padding:3px 10px;border-radius:var(--rf);font-size:var(--xs);font-weight:600}
-.prr{display:flex;align-items:baseline;gap:var(--s3);margin-bottom:var(--s6)}
-.pp{font-family:var(--fd);font-size:var(--xl);font-weight:800}
-.ppo{font-size:var(--base);color:var(--fnt);text-decoration:line-through}
-.psv{font-size:var(--xs);font-weight:700;background:rgba(21,128,61,.1);color:#15803d;padding:3px 10px;border-radius:var(--rf)}
-.fts{margin-bottom:var(--s8)}
-.ftl{font-size:var(--xs);font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--fnt);margin-bottom:var(--s4)}
-.flist{display:flex;flex-direction:column;gap:var(--s3)}
-.fi{display:flex;align-items:center;gap:var(--s3);font-size:var(--sm)}
-.fd{width:6px;height:6px;border-radius:50%;background:var(--acc);flex-shrink:0}
-.cs{display:flex;flex-direction:column;gap:var(--s3)}
-.bby{display:flex;align-items:center;justify-content:center;gap:var(--s3);background:var(--acc);color:#fff;padding:var(--s4) var(--s8);border-radius:var(--rf);font-size:var(--base);font-weight:700;width:100%}
-.bby:hover{background:var(--acch);transform:translateY(-2px);box-shadow:0 10px 30px rgba(232,41,28,.32)}
-.btt{display:flex;align-items:center;justify-content:center;gap:var(--s3);background:#010101;color:#fff;padding:var(--s3) var(--s8);border-radius:var(--rf);font-size:var(--sm);font-weight:700;width:100%}
-.btt:hover{background:var(--acc);transform:translateY(-1px)}
-.disc{font-size:var(--xs);color:var(--fnt);text-align:center;padding-top:var(--s2)}
-.det{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rxl);padding:var(--s6);margin-top:var(--s8)}
-.dtl{font-size:var(--sm);font-weight:700;margin-bottom:var(--s4)}
-.dg{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3)}
-.di label{font-size:var(--xs);color:var(--mut);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:2px}
-.di span{font-size:var(--sm);font-weight:600}
-/* RELATED */
-.rel{padding-block:clamp(var(--s12),5vw,var(--s16))}
-.sh{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:var(--s8);flex-wrap:wrap;gap:var(--s4)}
-.se{font-size:var(--xs);font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);margin-bottom:var(--s2)}
-.st2{font-size:var(--xl);font-weight:800;letter-spacing:-.02em}
-.rg{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr));gap:var(--s4)}
-.mc2{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rxl);overflow:hidden;cursor:pointer;transition:transform var(--tr),box-shadow var(--tr)}
-.mc2:hover{transform:translateY(-4px);box-shadow:var(--sh2)}
-.ms{aspect-ratio:4/3;display:flex;align-items:center;justify-content:center}
-.mb{padding:var(--s3) var(--s4) var(--s4)}
-.mbn{font-size:var(--xs);color:var(--fnt);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-bottom:2px}
-.mnn{font-family:var(--fd);font-size:var(--base);font-weight:700;margin-bottom:var(--s3)}
-.mf{display:flex;align-items:center;justify-content:space-between}
-.mp{font-family:var(--fd);font-size:var(--base);font-weight:800}
-.mc3{font-size:var(--xs);font-weight:700;color:var(--acc)}
-/* FOOTER */
-.ft{padding-block:var(--s8);border-top:1px solid var(--bdr)}
-.fr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--s4)}
-.fn{font-size:var(--xs);color:var(--fnt)}.fn a{color:var(--acc)}
-.fl{display:flex;gap:var(--s5)}.fl a{font-size:var(--xs);color:var(--mut)}.fl a:hover{color:var(--txt)}
-/* SKELETON */
-@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
-.sk{background:linear-gradient(90deg,var(--suro) 25%,var(--sur2) 50%,var(--suro) 75%);background-size:200% 100%;animation:shimmer 1.5s ease-in-out infinite;border-radius:var(--rmd)}
-.r{opacity:0;transform:translateY(20px);transition:opacity .45s ease,transform .45s ease}.r.on{opacity:1;transform:none}
-@media(max-width:768px){.pg{grid-template-columns:1fr}.dg{grid-template-columns:1fr}.fr{flex-direction:column;text-align:center}}
-</style>
+    .ms img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    :root,[data-theme="light"]{
+      --fd:'Cabinet Grotesk','Helvetica Neue',sans-serif;
+      --fb:'Satoshi','Inter',sans-serif;
+      --xs:clamp(.75rem,.7rem + .25vw,.875rem);
+      --sm:clamp(.875rem,.8rem + .35vw,1rem);
+      --base:clamp(1rem,.95rem + .25vw,1.125rem);
+      --lg:clamp(1.125rem,1rem + .75vw,1.5rem);
+      --xl:clamp(1.5rem,1.2rem + 1.25vw,2.25rem);
+      --2xl:clamp(2rem,1.2rem + 2.5vw,3.5rem);
+      --s1:.25rem;
+      --s2:.5rem;
+      --s3:.75rem;
+      --s4:1rem;
+      --s5:1.25rem;
+      --s6:1.5rem;
+      --s8:2rem;
+      --s10:2.5rem;
+      --s12:3rem;
+      --s16:4rem;
+      --bg:#f5f4f0;
+      --sur:#faf9f7;
+      --sur2:#fff;
+      --suro:#edeae4;
+      --bdr:rgba(28,22,10,.09);
+      --txt:#18160f;
+      --mut:#68655e;
+      --fnt:#b2b0aa;
+      --acc:#E8291C;
+      --acch:#c41e13;
+      --accbg:rgba(232,41,28,.07);
+      --rsm:.375rem;
+      --rmd:.5rem;
+      --rlg:.75rem;
+      --rxl:1rem;
+      --r2xl:1.5rem;
+      --rf:9999px;
+      --sh1:0 1px 3px rgba(20,14,4,.06);
+      --sh2:0 4px 18px rgba(20,14,4,.09);
+      --sh3:0 14px 44px rgba(20,14,4,.13);
+      --tr:180ms cubic-bezier(.16,1,.3,1);
+      --w:1100px;
+    }
+
+    [data-theme="dark"]{
+      --bg:#111010;
+      --sur:#181715;
+      --sur2:#1f1e1c;
+      --suro:#252320;
+      --bdr:rgba(255,250,235,.08);
+      --txt:#e2e0da;
+      --mut:#7a7870;
+      --fnt:#4a4845;
+      --acc:#FF4438;
+      --acch:#FF3B2F;
+      --accbg:rgba(255,68,56,.09);
+      --sh1:0 1px 3px rgba(0,0,0,.22);
+      --sh2:0 4px 18px rgba(0,0,0,.32);
+      --sh3:0 14px 44px rgba(0,0,0,.48);
+    }
+
+    @media(prefers-color-scheme:dark){
+      :root:not([data-theme]){
+        --bg:#111010;
+        --sur:#181715;
+        --sur2:#1f1e1c;
+        --suro:#252320;
+        --bdr:rgba(255,250,235,.08);
+        --txt:#e2e0da;
+        --mut:#7a7870;
+        --fnt:#4a4845;
+        --acc:#FF4438;
+        --acch:#FF3B2F;
+        --accbg:rgba(255,68,56,.09);
+        --sh1:0 1px 3px rgba(0,0,0,.22);
+        --sh2:0 4px 18px rgba(0,0,0,.32);
+        --sh3:0 14px 44px rgba(0,0,0,.48);
+      }
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+    body{font-family:var(--fb);font-size:var(--base);color:var(--txt);background:var(--bg);min-height:100dvh}
+    img,svg{display:block;max-width:100%}
+    ul{list-style:none}
+    button{cursor:pointer;background:none;border:none;font:inherit;color:inherit}
+    a{color:inherit;text-decoration:none}
+    h1,h2,h3{font-family:var(--fd);line-height:1.08;text-wrap:balance}
+    p{text-wrap:pretty}
+    :focus-visible{outline:2px solid var(--acc);outline-offset:3px;border-radius:var(--rsm)}
+    a,button{transition:color var(--tr),background var(--tr),box-shadow var(--tr),transform var(--tr)}
+    .w{max-width:var(--w);margin-inline:auto;padding-inline:clamp(var(--s4),4vw,var(--s8))}
+
+    .nav{
+      position:sticky;
+      top:0;
+      z-index:100;
+      background:color-mix(in oklab,var(--bg) 82%,transparent);
+      backdrop-filter:blur(20px) saturate(1.4);
+      -webkit-backdrop-filter:blur(20px) saturate(1.4);
+      border-bottom:1px solid var(--bdr)
+    }
+    .nr{display:flex;align-items:center;justify-content:space-between;padding-block:var(--s4);gap:var(--s4)}
+    .logo{display:flex;align-items:center;gap:var(--s2);font-family:var(--fd);font-size:var(--lg);font-weight:800;letter-spacing:-.025em}
+    .na{display:flex;align-items:center;gap:var(--s3)}
+    .bti{width:38px;height:38px;display:flex;align-items:center;justify-content:center;border-radius:var(--rmd);color:var(--mut)}
+    .bti:hover{color:var(--txt);background:var(--suro)}
+    .bbk{
+      display:inline-flex;align-items:center;gap:var(--s2);
+      font-size:var(--sm);font-weight:600;color:var(--mut);
+      padding:var(--s2) var(--s4);border-radius:var(--rf);border:1px solid var(--bdr)
+    }
+    .bbk:hover{color:var(--txt);border-color:var(--txt)}
+
+    .crumb{padding-block:var(--s4);font-size:var(--xs);color:var(--mut)}
+    .crumb a{color:var(--mut)}
+    .crumb a:hover{color:var(--acc)}
+    .crumb span{color:var(--fnt);margin-inline:var(--s2)}
+
+    .prod{padding-bottom:clamp(var(--s12),6vw,var(--s16))}
+    .pg{display:grid;grid-template-columns:1fr 1fr;gap:clamp(var(--s8),5vw,var(--s16));align-items:start}
+
+    .stg{
+      border-radius:var(--r2xl);
+      aspect-ratio:1;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+      overflow:hidden
+    }
+    .stg::before{
+      content:'';
+      position:absolute;
+      inset:0;
+      background:radial-gradient(ellipse at 65% 30%,rgba(232,41,28,.09) 0%,transparent 60%)
+    }
+    .bwm{background:radial-gradient(circle at 55% 40%,#f5ece4 0%,var(--sur) 68%)}
+    .bwk{background:radial-gradient(circle at 55% 40%,#e4e8f0 0%,var(--sur) 68%)}
+    .bvv{background:radial-gradient(circle at 55% 40%,#eef5e4 0%,var(--sur) 68%)}
+    [data-theme="dark"] .bwm{background:radial-gradient(circle at 55% 40%,#2a2320 0%,var(--sur) 68%)}
+    [data-theme="dark"] .bwk{background:radial-gradient(circle at 55% 40%,#1e2228 0%,var(--sur) 68%)}
+    [data-theme="dark"] .bvv{background:radial-gradient(circle at 55% 40%,#20281e 0%,var(--sur) 68%)}
+
+    .pey{font-size:var(--xs);font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);margin-bottom:var(--s3)}
+    .pn{font-size:var(--2xl);font-weight:800;letter-spacing:-.03em;margin-bottom:var(--s4);line-height:1}
+    .pt{font-size:var(--lg);color:var(--mut);margin-bottom:var(--s5);line-height:1.4}
+    .mr{display:flex;align-items:center;gap:var(--s4);margin-bottom:var(--s6);font-size:var(--sm);flex-wrap:wrap}
+    .str{color:#f59e0b;letter-spacing:1px}
+    .mc{background:var(--suro);padding:3px 10px;border-radius:var(--rf);font-size:var(--xs);font-weight:600}
+    .prr{display:flex;align-items:baseline;gap:var(--s3);margin-bottom:var(--s6);flex-wrap:wrap}
+    .pp{font-family:var(--fd);font-size:var(--xl);font-weight:800}
+    .ppo{font-size:var(--base);color:var(--fnt);text-decoration:line-through}
+    .psv{font-size:var(--xs);font-weight:700;background:rgba(21,128,61,.1);color:#15803d;padding:3px 10px;border-radius:var(--rf)}
+    .fts{margin-bottom:var(--s8)}
+    .ftl{font-size:var(--xs);font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--fnt);margin-bottom:var(--s4)}
+    .flist{display:flex;flex-direction:column;gap:var(--s3)}
+    .fi{display:flex;align-items:flex-start;gap:var(--s3);font-size:var(--sm)}
+    .fd{width:6px;height:6px;border-radius:50%;background:var(--acc);flex-shrink:0;margin-top:.45rem}
+    .cs{display:flex;flex-direction:column;gap:var(--s3)}
+    .bby{
+      display:inline-flex;align-items:center;justify-content:center;gap:var(--s3);
+      background:var(--acc);color:#fff;padding:var(--s4) var(--s8);
+      border-radius:var(--rf);font-size:var(--base);font-weight:700;width:100%
+    }
+    .bby:hover{background:var(--acch);transform:translateY(-2px);box-shadow:0 10px 30px rgba(232,41,28,.32)}
+    .btt{
+      display:inline-flex;align-items:center;justify-content:center;gap:var(--s3);
+      background:#010101;color:#fff;padding:var(--s3) var(--s8);
+      border-radius:var(--rf);font-size:var(--sm);font-weight:700;width:100%
+    }
+    .btt:hover{background:var(--acc);transform:translateY(-1px)}
+    .is-disabled{opacity:.55;pointer-events:none}
+    .disc{font-size:var(--xs);color:var(--fnt);text-align:center;padding-top:var(--s2)}
+    .det{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--rxl);padding:var(--s6);margin-top:var(--s8)}
+    .dtl{font-size:var(--sm);font-weight:700;margin-bottom:var(--s4)}
+    .dg{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3)}
+    .di label{font-size:var(--xs);color:var(--mut);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:2px}
+    .di span{font-size:var(--sm);font-weight:600}
+
+    .rel{padding-block:clamp(var(--s12),5vw,var(--s16))}
+    .sh{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:var(--s8);flex-wrap:wrap;gap:var(--s4)}
+    .se{font-size:var(--xs);font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);margin-bottom:var(--s2)}
+    .st2{font-size:var(--xl);font-weight:800;letter-spacing:-.02em}
+    .rg{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr));gap:var(--s4)}
+    .mc2{
+      display:block;
+      background:var(--sur);
+      border:1px solid var(--bdr);
+      border-radius:var(--rxl);
+      overflow:hidden;
+      transition:transform var(--tr),box-shadow var(--tr)
+    }
+    .mc2:hover{transform:translateY(-4px);box-shadow:var(--sh2)}
+    .ms{aspect-ratio:4/3;display:flex;align-items:center;justify-content:center}
+    .mb{padding:var(--s3) var(--s4) var(--s4)}
+    .mbn{font-size:var(--xs);color:var(--fnt);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-bottom:2px}
+    .mnn{font-family:var(--fd);font-size:var(--base);font-weight:700;margin-bottom:var(--s3)}
+    .mf{display:flex;align-items:center;justify-content:space-between;gap:var(--s4)}
+    .mp{font-family:var(--fd);font-size:var(--base);font-weight:800}
+    .mc3{font-size:var(--xs);font-weight:700;color:var(--acc)}
+
+    .ft{padding-block:var(--s8);border-top:1px solid var(--bdr)}
+    .fr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--s4)}
+    .fn{font-size:var(--xs);color:var(--fnt)}
+    .fn a{color:var(--acc)}
+    .fl{display:flex;gap:var(--s5)}
+    .fl a{font-size:var(--xs);color:var(--mut)}
+    .fl a:hover{color:var(--txt)}
+
+    @keyframes shimmer{
+      0%{background-position:-200% 0}
+      100%{background-position:200% 0}
+    }
+    .sk{
+      background:linear-gradient(90deg,var(--suro) 25%,var(--sur2) 50%,var(--suro) 75%);
+      background-size:200% 100%;
+      animation:shimmer 1.5s ease-in-out infinite;
+      border-radius:var(--rmd)
+    }
+    .r{opacity:0;transform:translateY(20px);transition:opacity .45s ease,transform .45s ease}
+    .r.on{opacity:1;transform:none}
+
+    @media(max-width:768px){
+      .pg{grid-template-columns:1fr}
+      .dg{grid-template-columns:1fr}
+      .fr{flex-direction:column;text-align:center}
+    }
+  </style>
 </head>
 <body>
+  <nav class="nav" role="navigation" aria-label="Main">
+    <div class="w">
+      <div class="nr">
+        <a href="../index.html" class="logo" aria-label="SNKDEAL home">
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+            <rect width="26" height="26" rx="5" fill="currentColor"/>
+            <path d="M5 17 Q9 7 15 9 Q19 10 17 14 Q15 18 9 19" stroke="var(--bg)" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <circle cx="19" cy="9" r="1.8" fill="var(--acc)"/>
+          </svg>
+          SNKDEAL
+        </a>
 
-<nav class="nav" role="navigation" aria-label="Main">
-  <div class="w"><div class="nr">
-    <a href="../index.html" class="logo" aria-label="SNKDEAL home">
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true"><rect width="26" height="26" rx="5" fill="currentColor"/><path d="M5 17 Q9 7 15 9 Q19 10 17 14 Q15 18 9 19" stroke="var(--bg)" stroke-width="2" stroke-linecap="round" fill="none"/><circle cx="19" cy="9" r="1.8" fill="var(--acc)"/></svg>
-      SNKDEAL
-    </a>
-    <div class="na">
-      <button class="bti" data-tt aria-label="Toggle theme"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></button>
-      <a href="../index.html" class="bbk"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>All Drops</a>
-    </div>
-  </div></div>
-</nav>
+        <div class="na">
+          <button class="bti" data-theme-toggle aria-label="Toggle theme">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="12" cy="12" r="5"/>
+              <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+            </svg>
+          </button>
 
-<main>
-<div class="w"><nav class="crumb" aria-label="Breadcrumb"><a href="../index.html">Home</a><span>/</span><span id="crumb-name" aria-current="page">Loading…</span></nav></div>
-
-<section class="prod" aria-labelledby="h1">
-  <div class="w"><div class="pg">
-    <div class="r"><div class="stg" id="shoe-stage"><div class="sk" style="width:72%;aspect-ratio:2;border-radius:var(--rlg)"></div></div></div>
-    <div class="r" style="transition-delay:80ms">
-      <p class="pey" id="p-brand">—</p>
-      <h1 class="pn" id="h1">Loading…</h1>
-      <p class="pt" id="p-tagline"></p>
-      <div class="mr"><span class="str">&#9733;&#9733;&#9733;&#9733;&#9733;</span><span id="p-reviews" class="mc"></span><span id="p-sizes" class="mc"></span></div>
-      <div class="prr"><span class="pp" id="p-price"></span><span class="ppo" id="p-price-old" style="display:none"></span><span class="psv" id="p-save" style="display:none">Save!</span></div>
-      <div class="fts"><p class="ftl">What makes it special</p><ul class="flist" id="feat-list"><li class="fi"><span class="sk" style="height:1em;width:60%"></span></li><li class="fi"><span class="sk" style="height:1em;width:50%"></span></li><li class="fi"><span class="sk" style="height:1em;width:55%"></span></li></ul></div>
-      <div class="cs">
-        <a id="btn-buy" href="#" target="_blank" rel="noopener noreferrer" class="bby"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>Shop This Deal</a>
-        <a id="btn-tt" href="#" target="_blank" rel="noopener noreferrer" class="btt"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.22 8.22 0 004.81 1.54V6.79a4.85 4.85 0 01-1.04-.1z"/></svg>Watch TikTok Review</a>
-      </div>
-      <p class="disc">&#128274; Affiliate link — we earn a small commission, no extra cost to you.</p>
-      <div class="det r" style="transition-delay:160ms"><p class="dtl">Product Details</p>
-        <div class="dg">
-          <div class="di"><label>Colorway</label><span id="d-color">—</span></div>
-          <div class="di"><label>Sizes</label><span id="d-sizes">—</span></div>
-          <div class="di"><label>Rating</label><span id="d-rating">—</span></div>
-          <div class="di"><label>Reviews</label><span id="d-reviews">—</span></div>
+          <a href="../index.html" class="bbk">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            All Drops
+          </a>
         </div>
       </div>
     </div>
-  </div></div>
-</section>
+  </nav>
 
-<section class="rel" aria-labelledby="rel-h">
-  <div class="w">
-    <div class="sh"><div><p class="se">More Drops</p><h2 class="st2" id="rel-h">You Might Also Like</h2></div><a href="../index.html" style="font-size:var(--sm);font-weight:600;color:var(--mut)">All Drops &rarr;</a></div>
-    <div class="rg" id="related"></div>
-  </div>
-</section>
-</main>
+  <main>
+    <div class="w">
+      <nav class="crumb" aria-label="Breadcrumb">
+        <a href="../index.html">Home</a>
+        <span>/</span>
+        <span id="crumb-name" aria-current="page">Sneaker Deal</span>
+      </nav>
+    </div>
 
-<footer class="ft" role="contentinfo"><div class="w"><div class="fr">
-  <p class="fn">&copy; 2026 SNKDEAL &mdash; <a href="../llms.txt" target="_blank">Affiliate disclosure</a></p>
-  <nav class="fl" aria-label="Footer"><a href="../llms.txt" target="_blank">llms.txt</a><a href="../index.html">All Drops</a><a href="https://www.tiktok.com/@popwiremedia" target="_blank" rel="noopener noreferrer">TikTok</a></nav>
-</div></div></footer>
+    <section class="prod" aria-labelledby="h1">
+      <div class="w">
+        <div class="pg">
+          <div class="r">
+            <div class="stg bwm" id="shoe-stage">
+              <div class="sk" style="width:72%;aspect-ratio:2;border-radius:var(--rlg)"></div>
+            </div>
+          </div>
 
-<script>
-/* Auto-detect PRODUCT_ID from URL slug — works on GitHub Pages */
-var PRODUCT_ID = (function () {
-  var path = window.location.pathname; // e.g. /goey-3/ or /goey-3/index.html
-  var parts = path.replace(/\/index\.html$/, '').split('/').filter(Boolean);
-  return parts[parts.length - 1] || 'goey-3';
-})();
+          <div class="r" style="transition-delay:80ms">
+            <p class="pey" id="p-brand">Sneaker Brand</p>
+            <h1 class="pn" id="h1">Sneaker Deal</h1>
+            <p class="pt" id="p-tagline">Deal details loading…</p>
 
-(function () {
-  var t = document.querySelector('[data-tt]');
-  var r = document.documentElement;
-  var d = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
-  r.setAttribute('data-theme', d);
+            <div class="mr">
+              <span class="str" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+              <span id="p-reviews" class="mc">Reviews loading</span>
+              <span id="p-sizes" class="mc">Sizes loading</span>
+            </div>
 
-  if (t) {
-    t.addEventListener('click', function () {
-      d = d === 'dark' ? 'light' : 'dark';
-      r.setAttribute('data-theme', d);
-      t.innerHTML =
-        d === 'dark'
-          ? '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
-          : '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
-    });
-  }
-})();
+            <div class="prr">
+              <span class="pp" id="p-price">$—</span>
+              <span class="ppo" id="p-price-old" hidden></span>
+              <span class="psv" id="p-save" hidden>Sale</span>
+            </div>
 
-var io = new IntersectionObserver(function (entries) {
-  entries.forEach(function (el) {
-    if (el.isIntersecting) {
-      el.target.classList.add('on');
-      io.unobserve(el.target);
-    }
-  });
-}, { threshold: 0.08 });
+            <div class="fts">
+              <p class="ftl">What makes it special</p>
+              <ul class="flist" id="feat-list">
+                <li class="fi"><span class="sk" style="height:1em;width:60%"></span></li>
+                <li class="fi"><span class="sk" style="height:1em;width:50%"></span></li>
+                <li class="fi"><span class="sk" style="height:1em;width:55%"></span></li>
+              </ul>
+            </div>
 
-document.querySelectorAll('.r').forEach(function (el) {
-  io.observe(el);
-});
+            <div class="cs">
+              <a id="btn-buy" href="#" target="_blank" rel="nofollow sponsored noopener noreferrer" class="bby is-disabled" aria-disabled="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+                  <line x1="3" y1="6" x2="21" y2="6"/>
+                  <path d="M16 10a4 4 0 01-8 0"/>
+                </svg>
+                Shop This Deal
+              </a>
 
-var SVGS = {
-  'goey-3': '<svg viewBox="0 0 260 180" width="230" fill="none"><ellipse cx="130" cy="168" rx="104" ry="9" fill="rgba(0,0,0,.05)"/><path d="M36 138 Q34 108 64 88 L150 79 Q194 77 212 96 L216 140Z" fill="#f4f1ee"/><path d="M66 88 Q100 72 140 71 L141 91 Q108 93 74 108Z" fill="#E8291C" opacity=".9"/><path d="M162 75 Q194 77 210 94 L208 112 Q188 98 166 96Z" fill="#E8291C" opacity=".55"/><path d="M36 138 Q35 110 52 98 L74 103 Q58 120 56 138Z" fill="#e8e2dc"/><path d="M34 134 Q32 143 36 138 L216 140 Q219 147 215 135Z" fill="#faf9f7" stroke="rgba(0,0,0,.06)" stroke-width=".8"/><path d="M32 146 Q32 155 36 151 L214 149 Q218 149 218 143 L216 140Z" fill="#18160f" opacity=".88"/><line x1="96" y1="102" x2="150" y2="95" stroke="#ccc" stroke-width="1.3" stroke-linecap="round"/><line x1="101" y1="113" x2="155" y2="106" stroke="#ccc" stroke-width="1.3" stroke-linecap="round"/><line x1="107" y1="124" x2="160" y2="117" stroke="#ccc" stroke-width="1.3" stroke-linecap="round"/></svg>',
-  'wade-808-ultra-v2': '<svg viewBox="0 0 260 180" width="230" fill="none"><ellipse cx="130" cy="168" rx="104" ry="9" fill="rgba(0,0,0,.05)"/><path d="M36 138 Q34 106 62 84 L148 74 Q190 72 208 92 L212 140Z" fill="#1a1e2a"/><path d="M64 84 Q98 68 138 67 L138 88 Q106 90 72 106Z" fill="#E8291C" opacity=".9"/><path d="M160 72 Q190 74 206 91 L204 110 Q184 96 164 94Z" fill="#E8291C" opacity=".6"/><path d="M36 138 Q35 108 52 96 L72 101 Q56 118 54 138Z" fill="#242838"/><path d="M34 134 Q32 143 36 138 L212 140 Q216 148 210 135Z" fill="#2a2e3e" stroke="rgba(255,255,255,.05)" stroke-width=".8"/><path d="M32 146 Q32 155 36 151 L210 149 Q214 149 214 143 L212 140Z" fill="#E8291C" opacity=".95"/><line x1="94" y1="98" x2="148" y2="91" stroke="rgba(255,255,255,.18)" stroke-width="1.2" stroke-linecap="round"/><line x1="99" y1="109" x2="153" y2="102" stroke="rgba(255,255,255,.18)" stroke-width="1.2" stroke-linecap="round"/><line x1="105" y1="120" x2="158" y2="113" stroke="rgba(255,255,255,.18)" stroke-width="1.2" stroke-linecap="round"/></svg>',
-  'kai-1': '<svg viewBox="0 0 260 180" width="230" fill="none"><ellipse cx="130" cy="168" rx="104" ry="9" fill="rgba(0,0,0,.05)"/><path d="M36 138 Q34 108 64 88 L150 79 Q194 77 212 96 L216 140Z" fill="#f0f5e8"/><path d="M66 88 Q100 72 140 71 L141 91 Q108 93 74 108Z" fill="#84cc16" opacity=".85"/><path d="M162 75 Q194 77 210 94 L208 112 Q188 98 166 96Z" fill="#84cc16" opacity=".55"/><path d="M36 138 Q35 110 52 98 L74 103 Q58 120 56 138Z" fill="#dce8cc"/><text x="178" y="128" font-size="26" font-weight="900" fill="#84cc16" opacity=".55" font-family="sans-serif">A</text><path d="M34 134 Q32 143 36 138 L216 140 Q219 147 215 135Z" fill="#f8fcf0" stroke="rgba(0,0,0,.05)" stroke-width=".8"/><path d="M32 146 Q32 155 36 151 L214 149 Q218 149 218 143 L216 140Z" fill="#18160f" opacity=".85"/><line x1="96" y1="102" x2="150" y2="95" stroke="#aad06c" stroke-width="1.5" stroke-linecap="round"/><line x1="101" y1="113" x2="155" y2="106" stroke="#aad06c" stroke-width="1.5" stroke-linecap="round"/><line x1="107" y1="124" x2="160" y2="117" stroke="#aad06c" stroke-width="1.5" stroke-linecap="round"/></svg>'
-};
+              <a id="btn-tt" href="#" target="_blank" rel="noopener noreferrer" class="btt is-disabled" aria-disabled="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.22 8.22 0 004.81 1.54V6.79a4.85 4.85 0 01-1.04-.1z"/>
+                </svg>
+                Watch TikTok Review
+              </a>
+            </div>
 
-var BGS = {
-  'goey-3': 'bwm',
-  'wade-808-ultra-v2': 'bwk',
-  'kai-1': 'bvv'
-};
+            <p class="disc">Affiliate link — we earn a small commission, no extra cost to you.</p>
 
-function getProductVisual(p, productId) {
-  if (p.image && p.image.trim() !== '') {
-    return '<img src="' + p.image + '" alt="' + p.name + '" loading="eager" style="max-width:100%;max-height:100%;object-fit:contain;display:block;">';
-  }
-  return SVGS[productId] || '';
-}
+            <div class="det r" style="transition-delay:160ms">
+              <p class="dtl">Product Details</p>
+              <div class="dg">
+                <div class="di"><label>Colorway</label><span id="d-color">—</span></div>
+                <div class="di"><label>Sizes</label><span id="d-sizes">—</span></div>
+                <div class="di"><label>Rating</label><span id="d-rating">—</span></div>
+                <div class="di"><label>Reviews</label><span id="d-reviews">—</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-function setMetaByName(name, content) {
-  if (!content) return;
-  var el = document.querySelector('meta[name="' + name + '"]');
-  if (!el) {
-    el = document.createElement('meta');
-    el.setAttribute('name', name);
-    document.head.appendChild(el);
-  }
-  el.setAttribute('content', content);
-}
+    <section class="rel" aria-labelledby="rel-h">
+      <div class="w">
+        <div class="sh">
+          <div>
+            <p class="se">More Drops</p>
+            <h2 class="st2" id="rel-h">You Might Also Like</h2>
+          </div>
+          <a href="../index.html" style="font-size:var(--sm);font-weight:600;color:var(--mut)">All Drops &rarr;</a>
+        </div>
+        <div class="rg" id="related"></div>
+      </div>
+    </section>
+  </main>
 
-function setMetaByProperty(property, content) {
-  if (!content) return;
-  var el = document.querySelector('meta[property="' + property + '"]');
-  if (!el) {
-    el = document.createElement('meta');
-    el.setAttribute('property', property);
-    document.head.appendChild(el);
-  }
-  el.setAttribute('content', content);
-}
+  <footer class="ft" role="contentinfo">
+    <div class="w">
+      <div class="fr">
+        <p class="fn">&copy; 2026 SNKDEAL &mdash; <a href="../llms.txt" target="_blank" rel="noopener noreferrer">Affiliate disclosure</a></p>
+        <nav class="fl" aria-label="Footer">
+          <a href="../llms.txt" target="_blank" rel="noopener noreferrer">llms.txt</a>
+          <a href="../index.html">All Drops</a>
+          <a href="https://www.tiktok.com/@popwiremedia" target="_blank" rel="noopener noreferrer">TikTok</a>
+        </nav>
+      </div>
+    </div>
+  </footer>
 
-function setCanonical(url) {
-  var canon = document.querySelector('link[rel="canonical"]');
-  if (!canon) {
-    canon = document.createElement('link');
-    canon.rel = 'canonical';
-    document.head.appendChild(canon);
-  }
-  canon.href = url;
-}
-
-function parsePrice(value) {
-  return String(value || '').replace(/[^0-9.]/g, '');
-}
-
-function parseReviewCount(value) {
-  var raw = String(value || '').trim().toLowerCase();
-  if (raw.indexOf('k') > -1) {
-    return String(Math.round(parseFloat(raw.replace('k', '')) * 1000));
-  }
-  return raw.replace(/[^0-9]/g, '') || '0';
-}
-
-fetch('../products.json')
-  .then(function (r) { return r.json(); })
-  .then(function (data) {
-    var p = data[PRODUCT_ID];
-    if (!p) {
-      document.title = 'Product Not Found — SNKDEAL';
-      document.getElementById('h1').textContent = 'Product not found';
-      document.getElementById('p-tagline').textContent = 'We could not find this product.';
-      return;
-    }
-
-    var siteUrl = 'https://snkdeal.github.io';
-    var pageUrl = siteUrl + p['page-link'];
-    var imageUrl = p.image && p.image.trim() !== ''
-      ? (p.image.indexOf('http') === 0 ? p.image : siteUrl + p.image)
-      : siteUrl + '/og-image.jpg';
-
-    /* UI */
-    document.title = p.name + ' Deal — SNKDEAL';
-    setMetaByName('description', p.name + ' by ' + p.brand + '. ' + p.tagline + ' Reviewed by @popwiremedia on TikTok. Now ' + p.price + '.');
-    setCanonical(pageUrl);
-
-    document.getElementById('crumb-name').textContent = p.name;
-    document.getElementById('p-brand').textContent = p.brand;
-    document.getElementById('h1').textContent = p.name;
-    document.getElementById('p-tagline').textContent = p.tagline;
-    document.getElementById('p-reviews').textContent = p.reviews + ' reviews';
-    document.getElementById('p-sizes').textContent = p.sizes;
-    document.getElementById('p-price').textContent = p.price;
-
-    document.getElementById('d-color').textContent = p.colorway;
-    document.getElementById('d-sizes').textContent = p.sizes;
-    document.getElementById('d-rating').textContent = p.rating + '★';
-    document.getElementById('d-reviews').textContent = p.reviews;
-
-    if (p.price_original) {
-      var oldPriceEl = document.getElementById('p-price-old');
-      oldPriceEl.textContent = p.price_original;
-      oldPriceEl.style.display = '';
-      document.getElementById('p-save').style.display = '';
-    }
-
-    document.getElementById('feat-list').innerHTML = [
-      p.feature1,
-      p.feature2,
-      p.feature3
-    ].map(function (f) {
-      return '<li class="fi"><span class="fd"></span>' + f + '</li>';
-    }).join('');
-
-    document.getElementById('btn-buy').href = p['affiliate-link'];
-    document.getElementById('btn-tt').href = p['tiktok-link'];
-
-    var stg = document.getElementById('shoe-stage');
-    stg.className = 'stg ' + (BGS[PRODUCT_ID] || 'bwm');
-    stg.innerHTML = getProductVisual(p, PRODUCT_ID);
-
-    /* Related products */
-    var rg = document.getElementById('related');
-    rg.innerHTML = '';
-
-    Object.keys(data).forEach(function (k) {
-      if (k === PRODUCT_ID) return;
-
-      var rp = data[k];
-      var bg = BGS[k] || 'bwm';
-      var visual = getProductVisual(rp, k);
-
-      var d2 = document.createElement('article');
-      d2.className = 'mc2';
-      d2.innerHTML =
-        '<div class="ms ' + bg + '">' + visual + '</div>' +
-        '<div class="mb">' +
-          '<p class="mbn">' + rp.brand + '</p>' +
-          '<h3 class="mnn">' + rp.name + '</h3>' +
-          '<div class="mf">' +
-            '<span class="mp">' + rp.price + '</span>' +
-            '<span class="mc3">View Deal &rarr;</span>' +
-          '</div>' +
-        '</div>';
-
-      d2.addEventListener('click', function () {
-        window.location.href = rp['page-link'];
-      });
-
-      rg.appendChild(d2);
-    });
-
-    document.querySelectorAll('.r').forEach(function (el) {
-      io.observe(el);
-    });
-
-    /* SEO */
-    setMetaByProperty('og:type', 'product');
-    setMetaByProperty('og:title', p.name + ' Deal — SNKDEAL');
-    setMetaByProperty('og:description', p.tagline + ' Reviewed by @popwiremedia. Now ' + p.price + '.');
-    setMetaByProperty('og:url', pageUrl);
-    setMetaByProperty('og:site_name', 'SNKDEAL');
-    setMetaByProperty('og:image', imageUrl);
-
-    setMetaByName('twitter:card', 'summary_large_image');
-    setMetaByName('twitter:site', '@popwiremedia');
-    setMetaByName('twitter:title', p.name + ' Deal — SNKDEAL');
-    setMetaByName('twitter:description', p.tagline + ' Now ' + p.price + '.');
-    setMetaByName('twitter:image', imageUrl);
-
-    var productLd = {
-      "@context": "https://schema.org",
-      "@type": "Product",
-      "name": p.name,
-      "brand": {
-        "@type": "Brand",
-        "name": p.brand
-      },
-      "description": p.tagline,
-      "image": imageUrl,
-      "sku": p.id,
-      "offers": {
-        "@type": "Offer",
-        "price": parsePrice(p.price),
-        "priceCurrency": "USD",
-        "availability": "https://schema.org/InStock",
-        "url": p['affiliate-link']
-      },
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": p.rating,
-        "reviewCount": parseReviewCount(p.reviews)
-      }
-    };
-
-    document.getElementById('ld-product').textContent = JSON.stringify(productLd);
-
-    var breadcrumbLdEl = document.getElementById('ld-breadcrumb');
-    if (!breadcrumbLdEl) {
-      breadcrumbLdEl = document.createElement('script');
-      breadcrumbLdEl.type = 'application/ld+json';
-      breadcrumbLdEl.id = 'ld-breadcrumb';
-      document.head.appendChild(breadcrumbLdEl);
-    }
-
-    breadcrumbLdEl.textContent = JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Home",
-          "item": siteUrl + '/'
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "name": p.name,
-          "item": pageUrl
-        }
-      ]
-    });
-  })
-  .catch(function () {
-    document.title = 'Error — SNKDEAL';
-    document.getElementById('h1').textContent = 'Could not load product';
-    document.getElementById('p-tagline').textContent = 'Please check that products.json exists and the path is correct.';
-  });
-</script>
+  <script src="../assets/js/product-seo.js"></script>
+  <script src="../assets/js/product-main.js"></script>
 </body>
 </html>
