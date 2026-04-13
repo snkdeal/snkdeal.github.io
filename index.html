@@ -419,6 +419,7 @@ fetch('products.json')
           "item": {
             "@type": "Product",
             "name": p.name,
+            "image": new URL(p.image, window.location.origin).href,
             "brand": {
               "@type": "Brand",
               "name": p.brand
