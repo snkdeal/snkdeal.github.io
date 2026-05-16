@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#000000" />
 
   <title>BTC/PHP</title>
@@ -16,8 +16,9 @@
     html,
     body {
       margin: 0;
+      padding: 0;
       width: 100%;
-      height: 100%;
+      min-height: 100%;
       background: #000;
       color: #fff;
       font-family: Arial, Helvetica, sans-serif;
@@ -25,16 +26,475 @@
     }
 
     body {
+      height: 100vh;
+      height: 100svh;
+    }
+
+    .app {
+      width: 100%;
+      height: 100%;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .pair {
+      font-size: clamp(14px, 4vw, 30px);
+      letter-spacing: 0.16em;
+      font-weight: 800;
+      opacity: 0.55;
+      margin-bottom: 18px;
+    }
+
+    .price {
+      width: 100%;
+      max-width: 100%;
+      font-size: clamp(38px, 11vw, 140px);
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: -0.05em;
+      text-align: center;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .change {
+      margin-top: 18px;
+      font-size: clamp(22px, 6vw, 56px);
+      font-weight: 800;
+    }
+
+    .change.up {
+      color: #30d158;
+    }
+
+    .change.down {
+      color: #ff453a;
+    }
+
+    .mini {
+      margin-top: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      font-size: clamp(13px, 3.5vw, 24px);
+      font-weight: 700;
+      opacity: 0.55;
+    }
+
+    .controls {
+      position: fixed;
+      right: 14px;
+      bottom: 14px;
+      display: flex;
+      gap: 10px;
+      z-index: 5;
+    }
+
+    button {
+      width: 46px;
+      height: 46px;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.14);
+      color: #fff;
+      font-size: 23px;
+      font-weight: 900;
+      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    .app {
-      width: 100%;
-      height: 100dvh;
-      min-height: 100%;
-      padding: max(18px, env(safe-area-inset-top))
+    button:active {
+      transform: scale(0.94);
+      background: rgba(255, 255, 255, 0.24);
+    }
+
+    .dot {
+      position: fixed;
+      left: 18px;
+      bottom: 33px;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #666;
+      z-index: 5;
+    }
+
+    .dot.live {
+      background: #30d158;
+    }
+
+    .dot.warn {
+      background: #ff9f0a;
+    }
+
+    .dot.dead {
+      background: #ff453a;
+    }
+
+    @media (max-width: 430px) {
+      .app {
+        padding: 16px;
+      }
+
+      .price {
+        font-size: clamp(34px, 12vw, 58px);
+        letter-spacing: -0.04em;
+      }
+
+      .change {
+        font-size: clamp(22px, 7vw, 36px);
+      }
+
+      .mini {
+        gap: 12px;
+      }
+    }
+
+    @media (orientation: landscape) and (max-height: 520px) {
+      .app {
+        padding: 10px 70px;
+      }
+
+      .pair {
+        margin-bottom: 8px;
+      }
+
+      .price {
+        font-size: clamp(36px, 13vh, 80px);
+      }
+
+      .change {
+        margin-top: 8px;
+        font-size: clamp(20px, 8vh, 42px);
+      }
+
+      .mini {
+        margin-top: 8px;
+      }
+
+      button {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <div class="pair">BTC/PHP</div>
+
+    <div id="price" class="price">---</div>
+
+    <div id="change" class="change">--</div>
+
+    <div class="mini">
+      <div>B <span id="bid">--</span></div>
+      <div>A <span id="ask">--</span></div>
+    </div>
+
+    <div id="dot" class="dot"></div>
+
+    <div class="controls">
+      <button type="button" onclick="manualRefresh()" aria-label="Refresh">↻</button>
+      <button type="button" onclick="goFullscreen()" aria-label="Fullscreen">⛶</button>
+    </div>
+  </main>
+
+  <script>
+    const SYMBOL = "BTCPHP";
+    const STREAM_SYMBOL = SYMBOL.toLowerCase();
+
+    const WS_URL =
+      `wss://wsapi.pro.coins.ph/openapi/quote/ws/v3/${STREAM_SYMBOL}@ticker`;
+
+    const REST_URL =
+      `https://api.pro.coins.ph/openapi/quote/v1/ticker/24hr?symbol=${SYMBOL}`;
+
+    const priceEl = document.getElementById("price");
+    const changeEl = document.getElementById("change");
+    const bidEl = document.getElementById("bid");
+    const askEl = document.getElementById("ask");
+    const dotEl = document.getElementById("dot");
+
+    let socket = null;
+    let reconnectTimer = null;
+    let pingTimer = null;
+    let fallbackTimer = null;
+
+    let reconnectAttempts = 0;
+    let lastUpdateAt = 0;
+    let manualClose = false;
+
+    let lastPriceText = "";
+    let lastChangeText = "";
+    let lastBidText = "";
+    let lastAskText = "";
+
+    function setDot(state) {
+      dotEl.className = `dot ${state}`;
+    }
+
+    function formatPHP(value, compact = false) {
+      const number = Number(value);
+
+      if (!Number.isFinite(number)) {
+        return "--";
+      }
+
+      return new Intl.NumberFormat("en-PH", {
+        style: "currency",
+        currency: "PHP",
+        notation: compact ? "compact" : "standard",
+        minimumFractionDigits: compact ? 0 : 2,
+        maximumFractionDigits: compact ? 1 : 2
+      }).format(number);
+    }
+
+    function formatPercent(value) {
+      const number = Number(value);
+
+      if (!Number.isFinite(number)) {
+        return "--";
+      }
+
+      return `${number > 0 ? "+" : ""}${number.toFixed(2)}%`;
+    }
+
+    function normalize(payload) {
+      let data = payload && payload.data ? payload.data : payload;
+
+      if (Array.isArray(data)) {
+        data = data.find(item => String(item.symbol || item.s).toUpperCase() === SYMBOL);
+      }
+
+      if (!data || typeof data !== "object") {
+        return null;
+      }
+
+      return {
+        last: data.c || data.lastPrice,
+        change: data.P || data.priceChangePercent,
+        bid: data.b || data.bidPrice,
+        ask: data.a || data.askPrice
+      };
+    }
+
+    function render(payload, source) {
+      const data = normalize(payload);
+
+      if (!data) {
+        return;
+      }
+
+      const priceText = formatPHP(data.last);
+      const changeText = formatPercent(data.change);
+      const bidText = formatPHP(data.bid, true);
+      const askText = formatPHP(data.ask, true);
+
+      if (lastPriceText !== priceText) {
+        priceEl.textContent = priceText;
+        lastPriceText = priceText;
+      }
+
+      if (lastChangeText !== changeText) {
+        changeEl.textContent = changeText;
+        lastChangeText = changeText;
+
+        const n = Number(data.change);
+        changeEl.classList.toggle("up", Number.isFinite(n) && n > 0);
+        changeEl.classList.toggle("down", Number.isFinite(n) && n < 0);
+      }
+
+      if (lastBidText !== bidText) {
+        bidEl.textContent = bidText;
+        lastBidText = bidText;
+      }
+
+      if (lastAskText !== askText) {
+        askEl.textContent = askText;
+        lastAskText = askText;
+      }
+
+      lastUpdateAt = Date.now();
+      setDot(source === "ws" ? "live" : "warn");
+    }
+
+    async function fetchRest() {
+      const response = await fetch(`${REST_URL}&_=${Date.now()}`, {
+        cache: "no-store"
+      });
+
+      if (!response.ok) {
+        throw new Error(`REST ${response.status}`);
+      }
+
+      const payload = await response.json();
+      render(payload, "rest");
+    }
+
+    function clearSocketOnly() {
+      clearInterval(pingTimer);
+      pingTimer = null;
+
+      if (!socket) {
+        return;
+      }
+
+      socket.onopen = null;
+      socket.onmessage = null;
+      socket.onerror = null;
+      socket.onclose = null;
+
+      try {
+        socket.close();
+      } catch (_) {}
+
+      socket = null;
+    }
+
+    function clearReconnect() {
+      clearTimeout(reconnectTimer);
+      reconnectTimer = null;
+    }
+
+    function connectSocket() {
+      clearReconnect();
+      clearSocketOnly();
+
+      manualClose = false;
+      setDot("warn");
+
+      try {
+        socket = new WebSocket(WS_URL);
+      } catch (_) {
+        scheduleReconnect();
+        return;
+      }
+
+      socket.onopen = () => {
+        reconnectAttempts = 0;
+        setDot("live");
+
+        pingTimer = setInterval(() => {
+          if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.send(JSON.stringify({ ping: Date.now() }));
+          }
+        }, 120000);
+      };
+
+      socket.onmessage = event => {
+        try {
+          const payload = JSON.parse(event.data);
+
+          if (payload.pong || payload.result === null) {
+            return;
+          }
+
+          render(payload, "ws");
+        } catch (_) {}
+      };
+
+      socket.onerror = () => {
+        setDot("warn");
+      };
+
+      socket.onclose = () => {
+        clearInterval(pingTimer);
+        pingTimer = null;
+
+        if (!manualClose) {
+          scheduleReconnect();
+        }
+      };
+    }
+
+    function scheduleReconnect() {
+      clearReconnect();
+
+      reconnectAttempts += 1;
+      setDot("dead");
+
+      const delay = Math.min(30000, reconnectAttempts * 3000);
+
+      reconnectTimer = setTimeout(() => {
+        connectSocket();
+      }, delay);
+    }
+
+    async function manualRefresh() {
+      manualClose = true;
+      reconnectAttempts = 0;
+
+      clearReconnect();
+      clearSocketOnly();
+
+      try {
+        await fetchRest();
+      } catch (_) {
+        setDot("dead");
+      }
+
+      connectSocket();
+    }
+
+    function startFallback() {
+      clearInterval(fallbackTimer);
+
+      fallbackTimer = setInterval(async () => {
+        const stale = Date.now() - lastUpdateAt > 20000;
+
+        if (!stale) {
+          return;
+        }
+
+        try {
+          await fetchRest();
+        } catch (_) {
+          setDot("dead");
+        }
+      }, 15000);
+    }
+
+    async function goFullscreen() {
+      try {
+        if (!document.fullscreenElement) {
+          await document.documentElement.requestFullscreen();
+        }
+      } catch (_) {}
+    }
+
+    window.addEventListener("beforeunload", () => {
+      manualClose = true;
+
+      clearReconnect();
+      clearSocketOnly();
+      clearInterval(fallbackTimer);
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") {
+        if (!socket || socket.readyState === WebSocket.CLOSED) {
+          connectSocket();
+        }
+      }
+    });
+
+    fetchRest().catch(() => setDot("warn"));
+    startFallback();
+    connectSocket();
+  </script>
+</body>
+</html>      padding: max(18px, env(safe-area-inset-top))
                max(18px, env(safe-area-inset-right))
                max(18px, env(safe-area-inset-bottom))
                max(18px, env(safe-area-inset-left));
