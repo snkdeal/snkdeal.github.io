@@ -62,6 +62,14 @@
       margin-bottom: 28px;
     }
 
+    .change.up {
+      color: #30d158;
+    }
+
+    .change.down {
+      color: #ff453a;
+    }
+
     .details {
       display: flex;
       justify-content: center;
@@ -146,23 +154,35 @@
     <div id="status" class="status">Opening Coins.ph live stream...</div>
 
     <div class="buttons">
-      <button onclick="connectSocket()">Reconnect</button>
-      <button onclick="goFullscreen()">Fullscreen</button>
-      <button onclick="keepScreenAwake()">Keep Screen On</button>
+      <button type="button" onclick="manualReconnect()">Reconnect</button>
+      <button type="button" onclick="goFullscreen()">Fullscreen</button>
+      <button type="button" onclick="keepScreenAwake()">Keep Screen On</button>
     </div>
 
     <div class="footer">
-      Live data from Coins.ph WebSocket. Tap Keep Screen On and Fullscreen for monitor mode.
+      Live data from Coins.ph public market API. Tap Keep Screen On and Fullscreen for monitor mode.
     </div>
   </main>
 
   <script>
     const SYMBOL = "BTCPHP";
-    const STREAM_SYMBOL = "btcphp";
+    const STREAM_SYMBOL = SYMBOL.toLowerCase();
 
+    /*
+      Coins.ph docs:
+      Base WSS: wss://wsapi.pro.coins.ph
+      Raw stream: /openapi/quote/ws/v3/<streamName>
+      Ticker stream: <symbol>@ticker
+    */
     const WS_URL =
       `wss://wsapi.pro.coins.ph/openapi/quote/ws/v3/${STREAM_SYMBOL}@ticker`;
 
+    /*
+      Coins.ph public REST base:
+      https://api.pro.coins.ph
+      24hr ticker:
+      /openapi/quote/v1/ticker/24hr?symbol=BTCPHP
+    */
     const REST_24H_URL =
       `https://api.pro.coins.ph/openapi/quote/v1/ticker/24hr?symbol=${SYMBOL}`;
 
@@ -176,8 +196,14 @@
 
     let socket = null;
     let wakeLock = null;
+
     let reconnectTimer = null;
     let pingTimer = null;
+    let restPollTimer = null;
+
+    let reconnectAttempts = 0;
+    let manualClose = false;
+    let lastLiveUpdateAt = 0;
 
     function formatPHP(value) {
       const number = Number(value);
@@ -202,122 +228,245 @@
       }
 
       const sign = number > 0 ? "+" : "";
-
       return `${sign}${number.toFixed(2)}%`;
     }
 
-    function updateDisplay(data) {
+    function normalizeTickerPayload(payload) {
       /*
-        Coins.ph btcphp@ticker fields:
-        c = last price
-        P = 24h price change percent
-        b = best bid
-        a = best ask
-        h = 24h high
-        l = 24h low
+        Raw stream payload:
+        {
+          e, E, s, p, P, c, b, a, h, l, ...
+        }
+
+        Combined stream payload:
+        {
+          stream: "btcphp@ticker",
+          data: { ...tickerPayload }
+        }
+
+        REST payload:
+        {
+          symbol, priceChangePercent, lastPrice, bidPrice, askPrice, highPrice, lowPrice
+        }
+
+        REST can also return an array if the API changes or if symbols are used.
       */
 
-      priceEl.textContent = formatPHP(data.c);
-      changeEl.textContent = `24H ${formatPercent(data.P)}`;
+      let data = payload;
 
-      bidEl.textContent = formatPHP(data.b);
-      askEl.textContent = formatPHP(data.a);
-      highEl.textContent = formatPHP(data.h);
-      lowEl.textContent = formatPHP(data.l);
+      if (data && data.data) {
+        data = data.data;
+      }
 
-      const now = new Date();
+      if (Array.isArray(data)) {
+        data = data.find(item => String(item.symbol || item.s).toUpperCase() === SYMBOL) || data[0];
+      }
+
+      if (!data || typeof data !== "object") {
+        return null;
+      }
+
+      return {
+        symbol: data.s || data.symbol || SYMBOL,
+        last: data.c || data.lastPrice || data.price,
+        changePercent: data.P || data.priceChangePercent,
+        bid: data.b || data.bidPrice,
+        ask: data.a || data.askPrice,
+        high: data.h || data.highPrice,
+        low: data.l || data.lowPrice,
+        eventTime: data.E || data.closeTime || Date.now()
+      };
+    }
+
+    function updateDisplay(payload, source = "Live") {
+      const ticker = normalizeTickerPayload(payload);
+
+      if (!ticker) {
+        console.warn("Unsupported ticker payload:", payload);
+        return;
+      }
+
+      priceEl.textContent = formatPHP(ticker.last);
+      changeEl.textContent = `24H ${formatPercent(ticker.changePercent)}`;
+
+      const changeNumber = Number(ticker.changePercent);
+      changeEl.classList.toggle("up", Number.isFinite(changeNumber) && changeNumber > 0);
+      changeEl.classList.toggle("down", Number.isFinite(changeNumber) && changeNumber < 0);
+
+      bidEl.textContent = formatPHP(ticker.bid);
+      askEl.textContent = formatPHP(ticker.ask);
+      highEl.textContent = formatPHP(ticker.high);
+      lowEl.textContent = formatPHP(ticker.low);
+
+      lastLiveUpdateAt = Date.now();
 
       statusEl.textContent =
-        `Live | Last update: ${now.toLocaleTimeString()}`;
+        `${source} | Last update: ${new Date().toLocaleTimeString()}`;
+    }
+
+    async function loadRestData(source = "REST fallback") {
+      const url = `${REST_24H_URL}&_=${Date.now()}`;
+
+      const response = await fetch(url, {
+        method: "GET",
+        cache: "no-store"
+      });
+
+      if (!response.ok) {
+        throw new Error(`REST HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+      updateDisplay(data, source);
     }
 
     async function loadInitialRestData() {
       try {
-        const response = await fetch(REST_24H_URL, {
-          method: "GET",
-          cache: "no-store"
-        });
-
-        if (!response.ok) {
-          throw new Error(`REST HTTP ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        updateDisplay({
-          c: data.lastPrice,
-          P: data.priceChangePercent,
-          b: data.bidPrice,
-          a: data.askPrice,
-          h: data.highPrice,
-          l: data.lowPrice
-        });
+        await loadRestData("REST");
       } catch (error) {
-        console.warn("REST fallback failed:", error);
-        statusEl.textContent =
-          "REST failed. Waiting for WebSocket live price...";
+        console.warn("Initial REST load failed:", error);
+        statusEl.textContent = "REST failed. Waiting for WebSocket live price...";
       }
     }
 
-    function connectSocket() {
+    function startRestFallbackPolling() {
+      clearInterval(restPollTimer);
+
+      restPollTimer = setInterval(async () => {
+        /*
+          If WebSocket has not delivered data for 20 seconds,
+          use REST so the page still works on networks/browsers
+          that block WebSocket traffic.
+        */
+        const stale = Date.now() - lastLiveUpdateAt > 20000;
+
+        if (!stale) {
+          return;
+        }
+
+        try {
+          await loadRestData("REST fallback");
+        } catch (error) {
+          console.warn("REST fallback polling failed:", error);
+        }
+      }, 15000);
+    }
+
+    function cleanupSocket() {
       clearTimeout(reconnectTimer);
       clearInterval(pingTimer);
 
+      reconnectTimer = null;
+      pingTimer = null;
+
       if (socket) {
+        socket.onopen = null;
+        socket.onmessage = null;
+        socket.onerror = null;
+        socket.onclose = null;
+
         try {
           socket.close();
         } catch (error) {
           console.warn(error);
         }
-      }
 
+        socket = null;
+      }
+    }
+
+    function connectSocket() {
+      cleanupSocket();
+
+      manualClose = false;
       statusEl.textContent = "Connecting to Coins.ph WebSocket...";
 
-      socket = new WebSocket(WS_URL);
+      try {
+        socket = new WebSocket(WS_URL);
+      } catch (error) {
+        console.error("WebSocket constructor failed:", error);
+        scheduleReconnect();
+        return;
+      }
 
       socket.onopen = () => {
+        reconnectAttempts = 0;
         statusEl.textContent = "Connected. Waiting for live BTC/PHP price...";
 
         /*
-          Coins.ph docs say the connection uses ping frames.
-          Browser JavaScript cannot send native WebSocket ping frames,
-          so this sends a JSON ping message every 4 minutes.
+          Browser JavaScript cannot send native WebSocket ping frames.
+          Coins.ph documents JSON ping/pong messages, so we send this
+          every 2 minutes, safely under the 5-minute disconnect window.
         */
         pingTimer = setInterval(() => {
           if (socket && socket.readyState === WebSocket.OPEN) {
             socket.send(JSON.stringify({ ping: Date.now() }));
           }
-        }, 240000);
+        }, 120000);
       };
 
       socket.onmessage = event => {
         try {
-          const data = JSON.parse(event.data);
+          const payload = JSON.parse(event.data);
 
-          if (data.pong) {
+          if (payload.pong) {
             return;
           }
 
-          updateDisplay(data);
+          if (payload.result === null && payload.id) {
+            return;
+          }
+
+          if (payload.code || payload.msg || payload.desc) {
+            console.warn("Coins.ph WebSocket message:", payload);
+            statusEl.textContent = payload.msg || payload.desc || "WebSocket returned a message.";
+            return;
+          }
+
+          updateDisplay(payload, "Live");
         } catch (error) {
-          console.warn("Bad WebSocket message:", event.data);
+          console.warn("Bad WebSocket message:", event.data, error);
         }
       };
 
       socket.onerror = error => {
         console.error("WebSocket error:", error);
-        statusEl.textContent = "WebSocket error. Reconnecting...";
+        statusEl.textContent = "WebSocket error. Trying REST fallback...";
       };
 
-      socket.onclose = () => {
+      socket.onclose = event => {
         clearInterval(pingTimer);
 
-        statusEl.textContent = "Disconnected. Reconnecting...";
+        if (manualClose) {
+          return;
+        }
 
-        reconnectTimer = setTimeout(() => {
-          connectSocket();
-        }, 3000);
+        console.warn("WebSocket closed:", event.code, event.reason);
+        scheduleReconnect();
       };
+    }
+
+    function scheduleReconnect() {
+      reconnectAttempts += 1;
+
+      const delay = Math.min(30000, 3000 * reconnectAttempts);
+
+      statusEl.textContent =
+        `Disconnected. Reconnecting in ${Math.round(delay / 1000)}s...`;
+
+      clearTimeout(reconnectTimer);
+
+      reconnectTimer = setTimeout(() => {
+        connectSocket();
+      }, delay);
+    }
+
+    function manualReconnect() {
+      manualClose = true;
+      reconnectAttempts = 0;
+      cleanupSocket();
+      loadInitialRestData();
+      connectSocket();
     }
 
     async function goFullscreen() {
@@ -365,7 +514,14 @@
       }
     });
 
+    window.addEventListener("beforeunload", () => {
+      manualClose = true;
+      cleanupSocket();
+      clearInterval(restPollTimer);
+    });
+
     loadInitialRestData();
+    startRestFallbackPolling();
     connectSocket();
   </script>
 </body>
