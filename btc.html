@@ -190,7 +190,9 @@
 <body>
   <main class="app">
     <div class="pair">BTC/PHP</div>
+
     <div id="price" class="price">---</div>
+
     <div id="change" class="change">--</div>
 
     <div class="mini">
@@ -210,8 +212,11 @@
     const SYMBOL = "BTCPHP";
     const STREAM_SYMBOL = SYMBOL.toLowerCase();
 
-    const WS_URL = `wss://wsapi.pro.coins.ph/openapi/quote/ws/v3/${STREAM_SYMBOL}@ticker`;
-    const TICKER_URL = `https://api.pro.coins.ph/openapi/quote/v1/ticker/24hr?symbol=${SYMBOL}`;
+    const WS_URL =
+      `wss://wsapi.pro.coins.ph/openapi/quote/ws/v3/${STREAM_SYMBOL}@ticker`;
+
+    const REST_URL =
+      `https://api.pro.coins.ph/openapi/quote/v1/ticker/24hr?symbol=${SYMBOL}`;
 
     const priceEl = document.getElementById("price");
     const changeEl = document.getElementById("change");
@@ -219,12 +224,13 @@
     const askEl = document.getElementById("ask");
     const dotEl = document.getElementById("dot");
 
-    let socket;
-    let reconnectTimer;
-    let fallbackTimer;
+    let socket = null;
+    let reconnectTimer = null;
+    let fallbackTimer = null;
 
     let reconnectAttempts = 0;
     let lastUpdateAt = 0;
+    let manualClose = false;
 
     function setDot(state) {
       dotEl.className = `dot ${state}`;
@@ -237,12 +243,7 @@
         return "--";
       }
 
-      return new Intl.NumberFormat("en-PH", {
-        style: "decimal",
-        useGrouping: false,
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      }).format(number);
+      return number.toFixed(2);
     }
 
     function formatPercent(value) {
@@ -256,7 +257,11 @@
     }
 
     function normalize(payload) {
-      const data = payload && payload.data ? payload.data : payload;
+      let data = payload && payload.data ? payload.data : payload;
+
+      if (Array.isArray(data)) {
+        data = data.find(item => String(item.symbol || item.s).toUpperCase() === SYMBOL);
+      }
 
       if (!data || typeof data !== "object") {
         return null;
@@ -291,19 +296,20 @@
       setDot(source === "ws" ? "live" : "warn");
     }
 
-    async function fetchTicker() {
-      const response = await fetch(`${TICKER_URL}&_=${Date.now()}`, {
+    async function fetchRest() {
+      const response = await fetch(`${REST_URL}&_=${Date.now()}`, {
         cache: "no-store"
       });
 
       if (!response.ok) {
-        throw new Error("Ticker request failed");
+        throw new Error(`REST ${response.status}`);
       }
 
-      render(await response.json(), "rest");
+      const payload = await response.json();
+      render(payload, "rest");
     }
 
-    function closeSocket() {
+    function clearSocketOnly() {
       if (!socket) {
         return;
       }
@@ -320,16 +326,22 @@
       socket = null;
     }
 
-    function connectSocket() {
+    function clearReconnect() {
       clearTimeout(reconnectTimer);
-      closeSocket();
+      reconnectTimer = null;
+    }
 
+    function connectSocket() {
+      clearReconnect();
+      clearSocketOnly();
+
+      manualClose = false;
       setDot("warn");
 
       try {
         socket = new WebSocket(WS_URL);
       } catch (_) {
-        reconnectSocket();
+        scheduleReconnect();
         return;
       }
 
@@ -342,9 +354,11 @@
         try {
           const payload = JSON.parse(event.data);
 
-          if (!payload.pong && payload.result !== null) {
-            render(payload, "ws");
+          if (payload.pong || payload.result === null) {
+            return;
           }
+
+          render(payload, "ws");
         } catch (_) {}
       };
 
@@ -353,25 +367,34 @@
       };
 
       socket.onclose = () => {
-        reconnectSocket();
+        if (!manualClose) {
+          scheduleReconnect();
+        }
       };
     }
 
-    function reconnectSocket() {
+    function scheduleReconnect() {
+      clearReconnect();
+
       reconnectAttempts += 1;
       setDot("dead");
 
       const delay = Math.min(30000, reconnectAttempts * 3000);
 
-      reconnectTimer = setTimeout(connectSocket, delay);
+      reconnectTimer = setTimeout(() => {
+        connectSocket();
+      }, delay);
     }
 
     async function manualRefresh() {
-      clearTimeout(reconnectTimer);
-      closeSocket();
+      manualClose = true;
+      reconnectAttempts = 0;
+
+      clearReconnect();
+      clearSocketOnly();
 
       try {
-        await fetchTicker();
+        await fetchRest();
       } catch (_) {
         setDot("dead");
       }
@@ -380,13 +403,17 @@
     }
 
     function startFallback() {
+      clearInterval(fallbackTimer);
+
       fallbackTimer = setInterval(async () => {
-        if (Date.now() - lastUpdateAt <= 20000) {
+        const stale = Date.now() - lastUpdateAt > 20000;
+
+        if (!stale) {
           return;
         }
 
         try {
-          await fetchTicker();
+          await fetchRest();
         } catch (_) {
           setDot("dead");
         }
@@ -402,24 +429,26 @@
     }
 
     window.addEventListener("beforeunload", () => {
-      clearTimeout(reconnectTimer);
+      manualClose = true;
+
+      clearReconnect();
+      clearSocketOnly();
       clearInterval(fallbackTimer);
-      closeSocket();
     });
 
     document.addEventListener("visibilitychange", () => {
       if (document.visibilityState === "visible") {
-        fetchTicker().catch(() => {});
-
         if (!socket || socket.readyState === WebSocket.CLOSED) {
           connectSocket();
         }
+
+        fetchRest().catch(() => setDot("warn"));
       }
     });
 
-    fetchTicker().catch(() => setDot("warn"));
-    connectSocket();
+    fetchRest().catch(() => setDot("warn"));
     startFallback();
+    connectSocket();
   </script>
 </body>
 </html>
