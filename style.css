@@ -23,40 +23,55 @@ body {
 .app {
   width: 100%;
   height: 100%;
-  padding: 22px;
-  display: flex;
-  flex-direction: column;
+  padding: clamp(8px, 2.5vw, 24px);
+  display: grid;
+  grid-template-rows: 1fr auto;
   align-items: center;
-  justify-content: center;
+  justify-items: center;
   text-align: center;
 }
 
 .time {
   position: fixed;
-  top: 16px;
-  right: 18px;
-  font-size: clamp(12px, 3vw, 20px);
+  top: clamp(10px, 2.5vw, 18px);
+  right: clamp(12px, 3vw, 22px);
+  font-size: clamp(11px, 2.4vw, 20px);
   font-weight: 800;
-  opacity: 0.55;
+  opacity: 0.45;
   z-index: 5;
 }
 
 .price {
   width: 100%;
-  font-size: clamp(46px, 13.2vw, 168px);
-  line-height: 1;
+  max-width: 100vw;
+  height: 82svh;
+  padding: 0 clamp(2px, 1.5vw, 12px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: clamp(48px, 16vw, 230px);
+  line-height: 0.88;
   font-weight: 900;
-  letter-spacing: -0.05em;
+  letter-spacing: -0.075em;
+
   overflow-wrap: anywhere;
   word-break: break-word;
 }
 
 .alert-status {
-  margin-top: 18px;
-  min-height: 1.2em;
-  font-size: clamp(14px, 3.8vw, 26px);
+  width: 100%;
+  max-width: 96vw;
+  min-height: 1.25em;
+  margin-bottom: clamp(48px, 9vh, 72px);
+
+  font-size: clamp(12px, 3.2vw, 24px);
+  line-height: 1.15;
   font-weight: 800;
-  opacity: 0.7;
+  opacity: 0.68;
+
+  overflow-wrap: anywhere;
 }
 
 .alert-status.triggered {
@@ -66,21 +81,21 @@ body {
 
 .controls {
   position: fixed;
-  right: 14px;
-  bottom: 14px;
+  right: clamp(10px, 3vw, 16px);
+  bottom: clamp(10px, 3vw, 16px);
   display: flex;
-  gap: 10px;
+  gap: clamp(7px, 2vw, 10px);
   z-index: 5;
 }
 
 button {
-  width: 46px;
-  height: 46px;
+  width: clamp(38px, 10vw, 48px);
+  height: clamp(38px, 10vw, 48px);
   border: 0;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.14);
   color: #fff;
-  font-size: 23px;
+  font-size: clamp(18px, 5vw, 24px);
   font-weight: 900;
   cursor: pointer;
   display: flex;
@@ -95,10 +110,10 @@ button:active {
 
 .dot {
   position: fixed;
-  left: 18px;
-  bottom: 33px;
-  width: 9px;
-  height: 9px;
+  left: clamp(14px, 4vw, 20px);
+  bottom: clamp(26px, 6vw, 35px);
+  width: clamp(8px, 2vw, 10px);
+  height: clamp(8px, 2vw, 10px);
   border-radius: 50%;
   background: #666;
   z-index: 5;
@@ -118,10 +133,13 @@ button:active {
 
 .panel {
   position: fixed;
-  left: 14px;
-  right: 14px;
-  bottom: 74px;
-  padding: 16px;
+  left: clamp(10px, 3vw, 18px);
+  right: clamp(10px, 3vw, 18px);
+  bottom: clamp(64px, 13vw, 78px);
+  max-height: calc(100svh - 92px);
+  overflow-y: auto;
+
+  padding: clamp(14px, 4vw, 18px);
   border-radius: 22px;
   background: rgba(28, 28, 30, 0.96);
   backdrop-filter: blur(18px);
@@ -136,21 +154,21 @@ button:active {
 
 .panel-title {
   margin-bottom: 14px;
-  font-size: 16px;
+  font-size: clamp(15px, 4vw, 18px);
   font-weight: 900;
   opacity: 0.9;
 }
 
 .field {
   display: grid;
-  grid-template-columns: 112px 1fr;
+  grid-template-columns: minmax(82px, 112px) 1fr;
   gap: 10px;
   align-items: center;
   margin-top: 10px;
 }
 
 .field label {
-  font-size: 14px;
+  font-size: clamp(13px, 3.5vw, 15px);
   font-weight: 800;
   opacity: 0.7;
 }
@@ -163,7 +181,7 @@ button:active {
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.12);
   color: #fff;
-  font-size: 18px;
+  font-size: clamp(16px, 4.5vw, 19px);
   font-weight: 800;
   outline: none;
 }
@@ -176,7 +194,7 @@ button:active {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 15px;
+  font-size: clamp(14px, 3.8vw, 16px);
   font-weight: 800;
   opacity: 0.85;
 }
@@ -198,7 +216,7 @@ button:active {
   height: 44px;
   flex: 1;
   border-radius: 14px;
-  font-size: 15px;
+  font-size: clamp(14px, 3.8vw, 16px);
 }
 
 .save-btn {
@@ -214,48 +232,94 @@ button:active {
   background: rgba(255, 255, 255, 0.14);
 }
 
-@media (max-width: 430px) {
-  .app {
-    padding: 16px;
-  }
-
+/* Tall phones */
+@media (max-width: 430px) and (orientation: portrait) {
   .price {
-    font-size: clamp(41px, 14.4vw, 70px);
-    letter-spacing: -0.04em;
+    height: 84svh;
+    font-size: clamp(54px, 19vw, 104px);
+    line-height: 0.86;
+    letter-spacing: -0.08em;
   }
 
   .alert-status {
-    font-size: clamp(14px, 4.2vw, 20px);
-  }
-
-  .field {
-    grid-template-columns: 92px 1fr;
+    margin-bottom: 58px;
+    font-size: clamp(12px, 3.8vw, 18px);
   }
 }
 
+/* Very narrow phones */
+@media (max-width: 360px) and (orientation: portrait) {
+  .price {
+    height: 83svh;
+    font-size: clamp(48px, 18vw, 86px);
+    letter-spacing: -0.075em;
+  }
+
+  .field {
+    grid-template-columns: 82px 1fr;
+  }
+}
+
+/* Tablets and medium screens */
+@media (min-width: 431px) and (max-width: 900px) {
+  .price {
+    height: 82svh;
+    font-size: clamp(76px, 15.5vw, 150px);
+  }
+}
+
+/* Large desktop screens */
+@media (min-width: 901px) {
+  .price {
+    height: 80svh;
+    font-size: clamp(120px, 13vw, 240px);
+  }
+}
+
+/* Short landscape screens */
 @media (orientation: landscape) and (max-height: 520px) {
   .app {
-    padding: 10px 70px;
+    padding-left: clamp(54px, 10vw, 90px);
+    padding-right: clamp(54px, 10vw, 90px);
   }
 
   .price {
-    font-size: clamp(43px, 15.6vh, 96px);
+    height: 78svh;
+    font-size: clamp(48px, 24vh, 128px);
+    line-height: 0.82;
+    letter-spacing: -0.075em;
   }
 
   .alert-status {
-    margin-top: 8px;
-    font-size: clamp(13px, 4vh, 22px);
-  }
-
-  button {
-    width: 40px;
-    height: 40px;
-    font-size: 20px;
+    margin-bottom: 8px;
+    font-size: clamp(12px, 4vh, 20px);
   }
 
   .panel {
-    left: 70px;
-    right: 70px;
-    bottom: 60px;
+    left: clamp(58px, 11vw, 90px);
+    right: clamp(58px, 11vw, 90px);
+    bottom: 58px;
+  }
+}
+
+/* Ultra-short landscape screens */
+@media (orientation: landscape) and (max-height: 360px) {
+  .price {
+    height: 76svh;
+    font-size: clamp(42px, 22vh, 88px);
+  }
+
+  .time {
+    font-size: 11px;
+  }
+
+  .alert-status {
+    font-size: 12px;
+  }
+
+  button {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
   }
 }
