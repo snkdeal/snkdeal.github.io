@@ -18,7 +18,7 @@
       margin: 0;
       padding: 0;
       width: 100%;
-      min-height: 100%;
+      height: 100%;
       background: #000;
       color: #fff;
       font-family: Arial, Helvetica, sans-serif;
@@ -51,12 +51,10 @@
 
     .price {
       width: 100%;
-      max-width: 100%;
       font-size: clamp(38px, 11vw, 140px);
       line-height: 1;
       font-weight: 900;
       letter-spacing: -0.05em;
-      text-align: center;
       overflow-wrap: anywhere;
       word-break: break-word;
     }
@@ -192,9 +190,7 @@
 <body>
   <main class="app">
     <div class="pair">BTC/PHP</div>
-
     <div id="price" class="price">---</div>
-
     <div id="change" class="change">--</div>
 
     <div class="mini">
@@ -214,11 +210,9 @@
     const SYMBOL = "BTCPHP";
     const STREAM_SYMBOL = SYMBOL.toLowerCase();
 
-    const WS_URL =
-      `wss://wsapi.pro.coins.ph/openapi/quote/ws/v3/${STREAM_SYMBOL}@ticker`;
-
-    const REST_URL =
-      `https://api.pro.coins.ph/openapi/quote/v1/ticker/24hr?symbol=${SYMBOL}`;
+    const WS_URL = `wss://wsapi.pro.coins.ph/openapi/quote/ws/v3/${STREAM_SYMBOL}@ticker`;
+    const TICKER_URL = `https://api.pro.coins.ph/openapi/quote/v1/ticker/24hr?symbol=${SYMBOL}`;
+    const KLINES_URL = `https://api.pro.coins.ph/openapi/quote/v1/klines?symbol=${SYMBOL}&interval=4h&limit=1`;
 
     const priceEl = document.getElementById("price");
     const changeEl = document.getElementById("change");
@@ -226,25 +220,21 @@
     const askEl = document.getElementById("ask");
     const dotEl = document.getElementById("dot");
 
-    let socket = null;
-    let reconnectTimer = null;
-    let pingTimer = null;
-    let fallbackTimer = null;
+    let socket;
+    let reconnectTimer;
+    let fallbackTimer;
+    let klineTimer;
 
     let reconnectAttempts = 0;
     let lastUpdateAt = 0;
-    let manualClose = false;
-
-    let lastPriceText = "";
-    let lastChangeText = "";
-    let lastBidText = "";
-    let lastAskText = "";
+    let lastPrice = null;
+    let open4h = null;
 
     function setDot(state) {
       dotEl.className = `dot ${state}`;
     }
 
-    function formatPHP(value, compact = false) {
+    function formatNumber(value, compact = false) {
       const number = Number(value);
 
       if (!Number.isFinite(number)) {
@@ -252,9 +242,9 @@
       }
 
       return new Intl.NumberFormat("en-PH", {
-        style: "currency",
-        currency: "PHP",
+        style: "decimal",
         notation: compact ? "compact" : "standard",
+        useGrouping: false,
         minimumFractionDigits: compact ? 0 : 2,
         maximumFractionDigits: compact ? 1 : 2
       }).format(number);
@@ -270,12 +260,25 @@
       return `${number > 0 ? "+" : ""}${number.toFixed(2)}%`;
     }
 
-    function normalize(payload) {
-      let data = payload && payload.data ? payload.data : payload;
+    function updateChange() {
+      const last = Number(lastPrice);
+      const open = Number(open4h);
 
-      if (Array.isArray(data)) {
-        data = data.find(item => String(item.symbol || item.s).toUpperCase() === SYMBOL);
+      if (!Number.isFinite(last) || !Number.isFinite(open) || open === 0) {
+        changeEl.textContent = "--";
+        changeEl.classList.remove("up", "down");
+        return;
       }
+
+      const change = ((last - open) / open) * 100;
+
+      changeEl.textContent = formatPercent(change);
+      changeEl.classList.toggle("up", change > 0);
+      changeEl.classList.toggle("down", change < 0);
+    }
+
+    function normalize(payload) {
+      const data = payload && payload.data ? payload.data : payload;
 
       if (!data || typeof data !== "object") {
         return null;
@@ -283,7 +286,6 @@
 
       return {
         last: data.c || data.lastPrice,
-        change: data.P || data.priceChangePercent,
         bid: data.b || data.bidPrice,
         ask: data.a || data.askPrice
       };
@@ -296,56 +298,52 @@
         return;
       }
 
-      const priceText = formatPHP(data.last);
-      const changeText = formatPercent(data.change);
-      const bidText = formatPHP(data.bid, true);
-      const askText = formatPHP(data.ask, true);
+      lastPrice = data.last;
 
-      if (lastPriceText !== priceText) {
-        priceEl.textContent = priceText;
-        lastPriceText = priceText;
-      }
+      priceEl.textContent = formatNumber(data.last);
+      bidEl.textContent = formatNumber(data.bid, true);
+      askEl.textContent = formatNumber(data.ask, true);
 
-      if (lastChangeText !== changeText) {
-        changeEl.textContent = changeText;
-        lastChangeText = changeText;
-
-        const n = Number(data.change);
-        changeEl.classList.toggle("up", Number.isFinite(n) && n > 0);
-        changeEl.classList.toggle("down", Number.isFinite(n) && n < 0);
-      }
-
-      if (lastBidText !== bidText) {
-        bidEl.textContent = bidText;
-        lastBidText = bidText;
-      }
-
-      if (lastAskText !== askText) {
-        askEl.textContent = askText;
-        lastAskText = askText;
-      }
+      updateChange();
 
       lastUpdateAt = Date.now();
       setDot(source === "ws" ? "live" : "warn");
     }
 
-    async function fetchRest() {
-      const response = await fetch(`${REST_URL}&_=${Date.now()}`, {
+    async function fetch4hOpen() {
+      const response = await fetch(`${KLINES_URL}&_=${Date.now()}`, {
         cache: "no-store"
       });
 
       if (!response.ok) {
-        throw new Error(`REST ${response.status}`);
+        throw new Error("Kline request failed");
       }
 
       const payload = await response.json();
-      render(payload, "rest");
+
+      if (!Array.isArray(payload) || !payload.length) {
+        throw new Error("No kline data");
+      }
+
+      open4h = payload[payload.length - 1][1];
+      updateChange();
     }
 
-    function clearSocketOnly() {
-      clearInterval(pingTimer);
-      pingTimer = null;
+    async function fetchTicker() {
+      await fetch4hOpen();
 
+      const response = await fetch(`${TICKER_URL}&_=${Date.now()}`, {
+        cache: "no-store"
+      });
+
+      if (!response.ok) {
+        throw new Error("Ticker request failed");
+      }
+
+      render(await response.json(), "rest");
+    }
+
+    function closeSocket() {
       if (!socket) {
         return;
       }
@@ -362,45 +360,31 @@
       socket = null;
     }
 
-    function clearReconnect() {
-      clearTimeout(reconnectTimer);
-      reconnectTimer = null;
-    }
-
     function connectSocket() {
-      clearReconnect();
-      clearSocketOnly();
+      clearTimeout(reconnectTimer);
+      closeSocket();
 
-      manualClose = false;
       setDot("warn");
 
       try {
         socket = new WebSocket(WS_URL);
       } catch (_) {
-        scheduleReconnect();
+        reconnectSocket();
         return;
       }
 
       socket.onopen = () => {
         reconnectAttempts = 0;
         setDot("live");
-
-        pingTimer = setInterval(() => {
-          if (socket && socket.readyState === WebSocket.OPEN) {
-            socket.send(JSON.stringify({ ping: Date.now() }));
-          }
-        }, 120000);
       };
 
       socket.onmessage = event => {
         try {
           const payload = JSON.parse(event.data);
 
-          if (payload.pong || payload.result === null) {
-            return;
+          if (!payload.pong && payload.result !== null) {
+            render(payload, "ws");
           }
-
-          render(payload, "ws");
         } catch (_) {}
       };
 
@@ -409,37 +393,25 @@
       };
 
       socket.onclose = () => {
-        clearInterval(pingTimer);
-        pingTimer = null;
-
-        if (!manualClose) {
-          scheduleReconnect();
-        }
+        reconnectSocket();
       };
     }
 
-    function scheduleReconnect() {
-      clearReconnect();
-
+    function reconnectSocket() {
       reconnectAttempts += 1;
       setDot("dead");
 
       const delay = Math.min(30000, reconnectAttempts * 3000);
 
-      reconnectTimer = setTimeout(() => {
-        connectSocket();
-      }, delay);
+      reconnectTimer = setTimeout(connectSocket, delay);
     }
 
     async function manualRefresh() {
-      manualClose = true;
-      reconnectAttempts = 0;
-
-      clearReconnect();
-      clearSocketOnly();
+      clearTimeout(reconnectTimer);
+      closeSocket();
 
       try {
-        await fetchRest();
+        await fetchTicker();
       } catch (_) {
         setDot("dead");
       }
@@ -448,23 +420,25 @@
     }
 
     function startFallback() {
-      clearInterval(fallbackTimer);
-
       fallbackTimer = setInterval(async () => {
-        const stale = Date.now() - lastUpdateAt > 20000;
-
-        if (!stale) {
+        if (Date.now() - lastUpdateAt <= 20000) {
           return;
         }
 
         try {
-          await fetchRest();
+          await fetchTicker();
         } catch (_) {
           setDot("dead");
         }
       }, 15000);
     }
 
+    function startKlineRefresh() {
+      klineTimer = setInterval(() => {
+        fetch4hOpen().catch(() => {});
+      }, 60000);
+    }
+
     async function goFullscreen() {
       try {
         if (!document.fullscreenElement) {
@@ -474,1393 +448,26 @@
     }
 
     window.addEventListener("beforeunload", () => {
-      manualClose = true;
-
-      clearReconnect();
-      clearSocketOnly();
+      clearTimeout(reconnectTimer);
       clearInterval(fallbackTimer);
+      clearInterval(klineTimer);
+      closeSocket();
     });
 
     document.addEventListener("visibilitychange", () => {
       if (document.visibilityState === "visible") {
+        fetch4hOpen().catch(() => {});
+
         if (!socket || socket.readyState === WebSocket.CLOSED) {
           connectSocket();
         }
       }
     });
 
-    fetchRest().catch(() => setDot("warn"));
+    fetchTicker().catch(() => setDot("warn"));
+    connectSocket();
     startFallback();
-    connectSocket();
-  </script>
-</body>
-</html>      padding: max(18px, env(safe-area-inset-top))
-               max(18px, env(safe-area-inset-right))
-               max(18px, env(safe-area-inset-bottom))
-               max(18px, env(safe-area-inset-left));
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-    }
-
-    .pair {
-      font-size: clamp(14px, 4vw, 34px);
-      letter-spacing: 0.18em;
-      font-weight: 800;
-      opacity: 0.58;
-      margin-bottom: 18px;
-    }
-
-    .price {
-      font-size: clamp(48px, 17vw, 190px);
-      line-height: 0.92;
-      font-weight: 900;
-      letter-spacing: -0.06em;
-      white-space: nowrap;
-      max-width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .change {
-      margin-top: 18px;
-      font-size: clamp(22px, 6vw, 64px);
-      font-weight: 800;
-      opacity: 0.95;
-    }
-
-    .change.up {
-      color: #30d158;
-    }
-
-    .change.down {
-      color: #ff453a;
-    }
-
-    .mini {
-      margin-top: 18px;
-      display: flex;
-      gap: 20px;
-      justify-content: center;
-      flex-wrap: wrap;
-      font-size: clamp(13px, 3.6vw, 26px);
-      opacity: 0.55;
-      font-weight: 700;
-    }
-
-    .controls {
-      position: fixed;
-      right: max(12px, env(safe-area-inset-right));
-      bottom: max(12px, env(safe-area-inset-bottom));
-      display: flex;
-      gap: 10px;
-    }
-
-    button {
-      width: 46px;
-      height: 46px;
-      border: 0;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.12);
-      color: #fff;
-      font-size: 22px;
-      font-weight: 900;
-      cursor: pointer;
-      display: grid;
-      place-items: center;
-      backdrop-filter: blur(10px);
-    }
-
-    button:active {
-      transform: scale(0.94);
-      background: rgba(255, 255, 255, 0.2);
-    }
-
-    .dot {
-      position: fixed;
-      left: max(14px, env(safe-area-inset-left));
-      bottom: max(22px, env(safe-area-inset-bottom));
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: #666;
-    }
-
-    .dot.live {
-      background: #30d158;
-    }
-
-    .dot.warn {
-      background: #ff9f0a;
-    }
-
-    .dot.dead {
-      background: #ff453a;
-    }
-
-    @media (orientation: landscape) and (max-height: 520px) {
-      .pair {
-        margin-bottom: 10px;
-      }
-
-      .change {
-        margin-top: 10px;
-      }
-
-      .mini {
-        margin-top: 10px;
-      }
-
-      button {
-        width: 42px;
-        height: 42px;
-        font-size: 20px;
-      }
-    }
-  </style>
-</head>
-
-<body>
-  <main class="app">
-    <div class="pair">BTC/PHP</div>
-
-    <div id="price" class="price">---</div>
-
-    <div id="change" class="change">--</div>
-
-    <div class="mini">
-      <div>B <span id="bid">--</span></div>
-      <div>A <span id="ask">--</span></div>
-    </div>
-
-    <div id="dot" class="dot"></div>
-
-    <div class="controls">
-      <button type="button" onclick="manualRefresh()" aria-label="Refresh">↻</button>
-      <button type="button" onclick="goFullscreen()" aria-label="Fullscreen">⛶</button>
-    </div>
-  </main>
-
-  <script>
-    const SYMBOL = "BTCPHP";
-    const STREAM_SYMBOL = SYMBOL.toLowerCase();
-
-    const WS_URL =
-      `wss://wsapi.pro.coins.ph/openapi/quote/ws/v3/${STREAM_SYMBOL}@ticker`;
-
-    const REST_URL =
-      `https://api.pro.coins.ph/openapi/quote/v1/ticker/24hr?symbol=${SYMBOL}`;
-
-    const priceEl = document.getElementById("price");
-    const changeEl = document.getElementById("change");
-    const bidEl = document.getElementById("bid");
-    const askEl = document.getElementById("ask");
-    const dotEl = document.getElementById("dot");
-
-    let socket = null;
-    let reconnectTimer = 0;
-    let pingTimer = 0;
-    let fallbackTimer = 0;
-
-    let reconnectAttempts = 0;
-    let lastUpdateAt = 0;
-    let manualClose = false;
-
-    let lastPriceText = "";
-    let lastChangeText = "";
-    let lastBidText = "";
-    let lastAskText = "";
-
-    function setDot(state) {
-      dotEl.className = `dot ${state}`;
-    }
-
-    function formatPHP(value, compact = false) {
-      const number = Number(value);
-
-      if (!Number.isFinite(number)) {
-        return "--";
-      }
-
-      return new Intl.NumberFormat("en-PH", {
-        style: "currency",
-        currency: "PHP",
-        notation: compact ? "compact" : "standard",
-        maximumFractionDigits: 2
-      }).format(number);
-    }
-
-    function formatPercent(value) {
-      const number = Number(value);
-
-      if (!Number.isFinite(number)) {
-        return "--";
-      }
-
-      return `${number > 0 ? "+" : ""}${number.toFixed(2)}%`;
-    }
-
-    function normalize(payload) {
-      let data = payload && payload.data ? payload.data : payload;
-
-      if (Array.isArray(data)) {
-        data = data.find(item => String(item.symbol || item.s).toUpperCase() === SYMBOL);
-      }
-
-      if (!data || typeof data !== "object") {
-        return null;
-      }
-
-      return {
-        last: data.c || data.lastPrice,
-        change: data.P || data.priceChangePercent,
-        bid: data.b || data.bidPrice,
-        ask: data.a || data.askPrice
-      };
-    }
-
-    function setText(el, value, cacheName) {
-      if (window[cacheName] !== value) {
-        el.textContent = value;
-        window[cacheName] = value;
-      }
-    }
-
-    function render(payload, source) {
-      const data = normalize(payload);
-
-      if (!data) {
-        return;
-      }
-
-      const priceText = formatPHP(data.last);
-      const changeText = formatPercent(data.change);
-      const bidText = formatPHP(data.bid, true);
-      const askText = formatPHP(data.ask, true);
-
-      if (lastPriceText !== priceText) {
-        priceEl.textContent = priceText;
-        lastPriceText = priceText;
-      }
-
-      if (lastChangeText !== changeText) {
-        changeEl.textContent = changeText;
-        lastChangeText = changeText;
-
-        const n = Number(data.change);
-        changeEl.classList.toggle("up", Number.isFinite(n) && n > 0);
-        changeEl.classList.toggle("down", Number.isFinite(n) && n < 0);
-      }
-
-      if (lastBidText !== bidText) {
-        bidEl.textContent = bidText;
-        lastBidText = bidText;
-      }
-
-      if (lastAskText !== askText) {
-        askEl.textContent = askText;
-        lastAskText = askText;
-      }
-
-      lastUpdateAt = Date.now();
-      setDot(source === "ws" ? "live" : "warn");
-    }
-
-    async function fetchRest() {
-      const response = await fetch(`${REST_URL}&_=${Date.now()}`, {
-        cache: "no-store"
-      });
-
-      if (!response.ok) {
-        throw new Error(`REST ${response.status}`);
-      }
-
-      const payload = await response.json();
-      render(payload, "rest");
-    }
-
-    function clearSocketOnly() {
-      clearInterval(pingTimer);
-      pingTimer = 0;
-
-      if (!socket) {
-        return;
-      }
-
-      socket.onopen = null;
-      socket.onmessage = null;
-      socket.onerror = null;
-      socket.onclose = null;
-
-      try {
-        socket.close();
-      } catch (_) {}
-
-      socket = null;
-    }
-
-    function clearReconnect() {
-      clearTimeout(reconnectTimer);
-      reconnectTimer = 0;
-    }
-
-    function connectSocket() {
-      clearReconnect();
-      clearSocketOnly();
-
-      manualClose = false;
-      setDot("warn");
-
-      try {
-        socket = new WebSocket(WS_URL);
-      } catch (_) {
-        scheduleReconnect();
-        return;
-      }
-
-      socket.onopen = () => {
-        reconnectAttempts = 0;
-        setDot("live");
-
-        pingTimer = setInterval(() => {
-          if (socket && socket.readyState === WebSocket.OPEN) {
-            socket.send(JSON.stringify({ ping: Date.now() }));
-          }
-        }, 120000);
-      };
-
-      socket.onmessage = event => {
-        try {
-          const payload = JSON.parse(event.data);
-
-          if (payload.pong || payload.result === null) {
-            return;
-          }
-
-          render(payload, "ws");
-        } catch (_) {}
-      };
-
-      socket.onerror = () => {
-        setDot("warn");
-      };
-
-      socket.onclose = () => {
-        clearInterval(pingTimer);
-        pingTimer = 0;
-
-        if (!manualClose) {
-          scheduleReconnect();
-        }
-      };
-    }
-
-    function scheduleReconnect() {
-      clearReconnect();
-
-      reconnectAttempts += 1;
-      setDot("dead");
-
-      const delay = Math.min(30000, reconnectAttempts * 3000);
-
-      reconnectTimer = setTimeout(() => {
-        connectSocket();
-      }, delay);
-    }
-
-    async function manualRefresh() {
-      manualClose = true;
-      reconnectAttempts = 0;
-
-      clearReconnect();
-      clearSocketOnly();
-
-      try {
-        await fetchRest();
-      } catch (_) {
-        setDot("dead");
-      }
-
-      connectSocket();
-    }
-
-    function startFallback() {
-      clearInterval(fallbackTimer);
-
-      fallbackTimer = setInterval(async () => {
-        const stale = Date.now() - lastUpdateAt > 20000;
-
-        if (!stale) {
-          return;
-        }
-
-        try {
-          await fetchRest();
-        } catch (_) {
-          setDot("dead");
-        }
-      }, 15000);
-    }
-
-    async function goFullscreen() {
-      try {
-        if (!document.fullscreenElement) {
-          await document.documentElement.requestFullscreen();
-        }
-      } catch (_) {}
-    }
-
-    window.addEventListener("beforeunload", () => {
-      manualClose = true;
-
-      clearReconnect();
-      clearSocketOnly();
-      clearInterval(fallbackTimer);
-    });
-
-    document.addEventListener("visibilitychange", () => {
-      if (document.visibilityState === "visible") {
-        if (!socket || socket.readyState === WebSocket.CLOSED) {
-          connectSocket();
-        }
-      }
-    });
-
-    fetchRest().catch(() => setDot("warn"));
-    startFallback();
-    connectSocket();
-  </script>
-</body>
-</html>      padding: max(18px, env(safe-area-inset-top))
-               max(18px, env(safe-area-inset-right))
-               max(18px, env(safe-area-inset-bottom))
-               max(18px, env(safe-area-inset-left));
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-    }
-
-    .pair {
-      font-size: clamp(14px, 4vw, 34px);
-      letter-spacing: 0.18em;
-      font-weight: 800;
-      opacity: 0.58;
-      margin-bottom: 18px;
-    }
-
-    .price {
-      font-size: clamp(48px, 17vw, 190px);
-      line-height: 0.92;
-      font-weight: 900;
-      letter-spacing: -0.06em;
-      white-space: nowrap;
-      max-width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .change {
-      margin-top: 18px;
-      font-size: clamp(22px, 6vw, 64px);
-      font-weight: 800;
-      opacity: 0.95;
-    }
-
-    .change.up {
-      color: #30d158;
-    }
-
-    .change.down {
-      color: #ff453a;
-    }
-
-    .mini {
-      margin-top: 18px;
-      display: flex;
-      gap: 20px;
-      justify-content: center;
-      flex-wrap: wrap;
-      font-size: clamp(13px, 3.6vw, 26px);
-      opacity: 0.55;
-      font-weight: 700;
-    }
-
-    .controls {
-      position: fixed;
-      right: max(12px, env(safe-area-inset-right));
-      bottom: max(12px, env(safe-area-inset-bottom));
-      display: flex;
-      gap: 10px;
-    }
-
-    button {
-      width: 46px;
-      height: 46px;
-      border: 0;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.12);
-      color: #fff;
-      font-size: 22px;
-      font-weight: 900;
-      cursor: pointer;
-      display: grid;
-      place-items: center;
-      backdrop-filter: blur(10px);
-    }
-
-    button:active {
-      transform: scale(0.94);
-      background: rgba(255, 255, 255, 0.2);
-    }
-
-    .dot {
-      position: fixed;
-      left: max(14px, env(safe-area-inset-left));
-      bottom: max(22px, env(safe-area-inset-bottom));
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: #666;
-    }
-
-    .dot.live {
-      background: #30d158;
-    }
-
-    .dot.warn {
-      background: #ff9f0a;
-    }
-
-    .dot.dead {
-      background: #ff453a;
-    }
-
-    @media (orientation: landscape) and (max-height: 520px) {
-      .pair {
-        margin-bottom: 10px;
-      }
-
-      .change {
-        margin-top: 10px;
-      }
-
-      .mini {
-        margin-top: 10px;
-      }
-
-      button {
-        width: 42px;
-        height: 42px;
-        font-size: 20px;
-      }
-    }
-  </style>
-</head>
-
-<body>
-  <main class="app">
-    <div class="pair">BTC/PHP</div>
-
-    <div id="price" class="price">---</div>
-
-    <div id="change" class="change">--</div>
-
-    <div class="mini">
-      <div>B <span id="bid">--</span></div>
-      <div>A <span id="ask">--</span></div>
-    </div>
-
-    <div id="dot" class="dot"></div>
-
-    <div class="controls">
-      <button type="button" onclick="manualRefresh()" aria-label="Refresh">↻</button>
-      <button type="button" onclick="goFullscreen()" aria-label="Fullscreen">⛶</button>
-    </div>
-  </main>
-
-  <script>
-    const SYMBOL = "BTCPHP";
-    const STREAM_SYMBOL = SYMBOL.toLowerCase();
-
-    const WS_URL =
-      `wss://wsapi.pro.coins.ph/openapi/quote/ws/v3/${STREAM_SYMBOL}@ticker`;
-
-    const REST_URL =
-      `https://api.pro.coins.ph/openapi/quote/v1/ticker/24hr?symbol=${SYMBOL}`;
-
-    const priceEl = document.getElementById("price");
-    const changeEl = document.getElementById("change");
-    const bidEl = document.getElementById("bid");
-    const askEl = document.getElementById("ask");
-    const dotEl = document.getElementById("dot");
-
-    let socket = null;
-    let reconnectTimer = 0;
-    let pingTimer = 0;
-    let fallbackTimer = 0;
-
-    let reconnectAttempts = 0;
-    let lastUpdateAt = 0;
-    let manualClose = false;
-
-    let lastPriceText = "";
-    let lastChangeText = "";
-    let lastBidText = "";
-    let lastAskText = "";
-
-    function setDot(state) {
-      dotEl.className = `dot ${state}`;
-    }
-
-    function formatPHP(value, compact = false) {
-      const number = Number(value);
-
-      if (!Number.isFinite(number)) {
-        return "--";
-      }
-
-      return new Intl.NumberFormat("en-PH", {
-        style: "currency",
-        currency: "PHP",
-        notation: compact ? "compact" : "standard",
-        maximumFractionDigits: 2
-      }).format(number);
-    }
-
-    function formatPercent(value) {
-      const number = Number(value);
-
-      if (!Number.isFinite(number)) {
-        return "--";
-      }
-
-      return `${number > 0 ? "+" : ""}${number.toFixed(2)}%`;
-    }
-
-    function normalize(payload) {
-      let data = payload && payload.data ? payload.data : payload;
-
-      if (Array.isArray(data)) {
-        data = data.find(item => String(item.symbol || item.s).toUpperCase() === SYMBOL);
-      }
-
-      if (!data || typeof data !== "object") {
-        return null;
-      }
-
-      return {
-        last: data.c || data.lastPrice,
-        change: data.P || data.priceChangePercent,
-        bid: data.b || data.bidPrice,
-        ask: data.a || data.askPrice
-      };
-    }
-
-    function setText(el, value, cacheName) {
-      if (window[cacheName] !== value) {
-        el.textContent = value;
-        window[cacheName] = value;
-      }
-    }
-
-    function render(payload, source) {
-      const data = normalize(payload);
-
-      if (!data) {
-        return;
-      }
-
-      const priceText = formatPHP(data.last);
-      const changeText = formatPercent(data.change);
-      const bidText = formatPHP(data.bid, true);
-      const askText = formatPHP(data.ask, true);
-
-      if (lastPriceText !== priceText) {
-        priceEl.textContent = priceText;
-        lastPriceText = priceText;
-      }
-
-      if (lastChangeText !== changeText) {
-        changeEl.textContent = changeText;
-        lastChangeText = changeText;
-
-        const n = Number(data.change);
-        changeEl.classList.toggle("up", Number.isFinite(n) && n > 0);
-        changeEl.classList.toggle("down", Number.isFinite(n) && n < 0);
-      }
-
-      if (lastBidText !== bidText) {
-        bidEl.textContent = bidText;
-        lastBidText = bidText;
-      }
-
-      if (lastAskText !== askText) {
-        askEl.textContent = askText;
-        lastAskText = askText;
-      }
-
-      lastUpdateAt = Date.now();
-      setDot(source === "ws" ? "live" : "warn");
-    }
-
-    async function fetchRest() {
-      const response = await fetch(`${REST_URL}&_=${Date.now()}`, {
-        cache: "no-store"
-      });
-
-      if (!response.ok) {
-        throw new Error(`REST ${response.status}`);
-      }
-
-      const payload = await response.json();
-      render(payload, "rest");
-    }
-
-    function clearSocketOnly() {
-      clearInterval(pingTimer);
-      pingTimer = 0;
-
-      if (!socket) {
-        return;
-      }
-
-      socket.onopen = null;
-      socket.onmessage = null;
-      socket.onerror = null;
-      socket.onclose = null;
-
-      try {
-        socket.close();
-      } catch (_) {}
-
-      socket = null;
-    }
-
-    function clearReconnect() {
-      clearTimeout(reconnectTimer);
-      reconnectTimer = 0;
-    }
-
-    function connectSocket() {
-      clearReconnect();
-      clearSocketOnly();
-
-      manualClose = false;
-      setDot("warn");
-
-      try {
-        socket = new WebSocket(WS_URL);
-      } catch (_) {
-        scheduleReconnect();
-        return;
-      }
-
-      socket.onopen = () => {
-        reconnectAttempts = 0;
-        setDot("live");
-
-        pingTimer = setInterval(() => {
-          if (socket && socket.readyState === WebSocket.OPEN) {
-            socket.send(JSON.stringify({ ping: Date.now() }));
-          }
-        }, 120000);
-      };
-
-      socket.onmessage = event => {
-        try {
-          const payload = JSON.parse(event.data);
-
-          if (payload.pong || payload.result === null) {
-            return;
-          }
-
-          render(payload, "ws");
-        } catch (_) {}
-      };
-
-      socket.onerror = () => {
-        setDot("warn");
-      };
-
-      socket.onclose = () => {
-        clearInterval(pingTimer);
-        pingTimer = 0;
-
-        if (!manualClose) {
-          scheduleReconnect();
-        }
-      };
-    }
-
-    function scheduleReconnect() {
-      clearReconnect();
-
-      reconnectAttempts += 1;
-      setDot("dead");
-
-      const delay = Math.min(30000, reconnectAttempts * 3000);
-
-      reconnectTimer = setTimeout(() => {
-        connectSocket();
-      }, delay);
-    }
-
-    async function manualRefresh() {
-      manualClose = true;
-      reconnectAttempts = 0;
-
-      clearReconnect();
-      clearSocketOnly();
-
-      try {
-        await fetchRest();
-      } catch (_) {
-        setDot("dead");
-      }
-
-      connectSocket();
-    }
-
-    function startFallback() {
-      clearInterval(fallbackTimer);
-
-      fallbackTimer = setInterval(async () => {
-        const stale = Date.now() - lastUpdateAt > 20000;
-
-        if (!stale) {
-          return;
-        }
-
-        try {
-          await fetchRest();
-        } catch (_) {
-          setDot("dead");
-        }
-      }, 15000);
-    }
-
-    async function goFullscreen() {
-      try {
-        if (!document.fullscreenElement) {
-          await document.documentElement.requestFullscreen();
-        }
-      } catch (_) {}
-    }
-
-    window.addEventListener("beforeunload", () => {
-      manualClose = true;
-
-      clearReconnect();
-      clearSocketOnly();
-      clearInterval(fallbackTimer);
-    });
-
-    document.addEventListener("visibilitychange", () => {
-      if (document.visibilityState === "visible") {
-        if (!socket || socket.readyState === WebSocket.CLOSED) {
-          connectSocket();
-        }
-      }
-    });
-
-    fetchRest().catch(() => setDot("warn"));
-    startFallback();
-    connectSocket();
-  </script>
-</body>
-</html>      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-    }
-
-    .pair {
-      font-size: clamp(20px, 4vw, 52px);
-      letter-spacing: 0.14em;
-      font-weight: 700;
-      opacity: 0.85;
-      margin-bottom: 24px;
-    }
-
-    .price {
-      font-size: clamp(52px, 15vw, 210px);
-      font-weight: 900;
-      line-height: 0.95;
-      margin-bottom: 28px;
-      word-break: break-word;
-    }
-
-    .change {
-      font-size: clamp(24px, 5vw, 70px);
-      font-weight: 700;
-      margin-bottom: 28px;
-    }
-
-    .change.up {
-      color: #30d158;
-    }
-
-    .change.down {
-      color: #ff453a;
-    }
-
-    .details {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 18px;
-      font-size: clamp(15px, 2.4vw, 30px);
-      opacity: 0.85;
-      margin-bottom: 30px;
-    }
-
-    .status {
-      font-size: clamp(13px, 2vw, 22px);
-      opacity: 0.65;
-      min-height: 28px;
-      margin-bottom: 24px;
-    }
-
-    .buttons {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    button {
-      background: #fff;
-      color: #000;
-      border: 0;
-      border-radius: 999px;
-      padding: 13px 20px;
-      font-size: 15px;
-      font-weight: 800;
-      cursor: pointer;
-    }
-
-    button:hover {
-      opacity: 0.8;
-    }
-
-    .footer {
-      position: fixed;
-      left: 12px;
-      right: 12px;
-      bottom: 10px;
-      text-align: center;
-      font-size: 12px;
-      opacity: 0.45;
-    }
-
-    @media (max-width: 520px) {
-      .screen {
-        padding: 14px;
-      }
-
-      .buttons {
-        width: 100%;
-        max-width: 320px;
-      }
-
-      button {
-        width: 100%;
-      }
-    }
-  </style>
-</head>
-
-<body>
-  <main class="screen">
-    <div class="pair">COINS.PH BTC/PHP</div>
-
-    <div id="price" class="price">Connecting...</div>
-
-    <div id="change" class="change">24H --</div>
-
-    <div class="details">
-      <div>Bid: <span id="bid">--</span></div>
-      <div>Ask: <span id="ask">--</span></div>
-      <div>High: <span id="high">--</span></div>
-      <div>Low: <span id="low">--</span></div>
-    </div>
-
-    <div id="status" class="status">Opening Coins.ph live stream...</div>
-
-    <div class="buttons">
-      <button type="button" onclick="manualReconnect()">Reconnect</button>
-      <button type="button" onclick="goFullscreen()">Fullscreen</button>
-      <button type="button" onclick="keepScreenAwake()">Keep Screen On</button>
-    </div>
-
-    <div class="footer">
-      Live data from Coins.ph public market API. Tap Keep Screen On and Fullscreen for monitor mode.
-    </div>
-  </main>
-
-  <script>
-    const SYMBOL = "BTCPHP";
-    const STREAM_SYMBOL = SYMBOL.toLowerCase();
-
-    /*
-      Coins.ph docs:
-      Base WSS: wss://wsapi.pro.coins.ph
-      Raw stream: /openapi/quote/ws/v3/<streamName>
-      Ticker stream: <symbol>@ticker
-    */
-    const WS_URL =
-      `wss://wsapi.pro.coins.ph/openapi/quote/ws/v3/${STREAM_SYMBOL}@ticker`;
-
-    /*
-      Coins.ph public REST base:
-      https://api.pro.coins.ph
-      24hr ticker:
-      /openapi/quote/v1/ticker/24hr?symbol=BTCPHP
-    */
-    const REST_24H_URL =
-      `https://api.pro.coins.ph/openapi/quote/v1/ticker/24hr?symbol=${SYMBOL}`;
-
-    const priceEl = document.getElementById("price");
-    const changeEl = document.getElementById("change");
-    const bidEl = document.getElementById("bid");
-    const askEl = document.getElementById("ask");
-    const highEl = document.getElementById("high");
-    const lowEl = document.getElementById("low");
-    const statusEl = document.getElementById("status");
-
-    let socket = null;
-    let wakeLock = null;
-
-    let reconnectTimer = null;
-    let pingTimer = null;
-    let restPollTimer = null;
-
-    let reconnectAttempts = 0;
-    let manualClose = false;
-    let lastLiveUpdateAt = 0;
-
-    function formatPHP(value) {
-      const number = Number(value);
-
-      if (!Number.isFinite(number)) {
-        return "--";
-      }
-
-      return new Intl.NumberFormat("en-PH", {
-        style: "currency",
-        currency: "PHP",
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      }).format(number);
-    }
-
-    function formatPercent(value) {
-      const number = Number(value);
-
-      if (!Number.isFinite(number)) {
-        return "--";
-      }
-
-      const sign = number > 0 ? "+" : "";
-      return `${sign}${number.toFixed(2)}%`;
-    }
-
-    function normalizeTickerPayload(payload) {
-      /*
-        Raw stream payload:
-        {
-          e, E, s, p, P, c, b, a, h, l, ...
-        }
-
-        Combined stream payload:
-        {
-          stream: "btcphp@ticker",
-          data: { ...tickerPayload }
-        }
-
-        REST payload:
-        {
-          symbol, priceChangePercent, lastPrice, bidPrice, askPrice, highPrice, lowPrice
-        }
-
-        REST can also return an array if the API changes or if symbols are used.
-      */
-
-      let data = payload;
-
-      if (data && data.data) {
-        data = data.data;
-      }
-
-      if (Array.isArray(data)) {
-        data = data.find(item => String(item.symbol || item.s).toUpperCase() === SYMBOL) || data[0];
-      }
-
-      if (!data || typeof data !== "object") {
-        return null;
-      }
-
-      return {
-        symbol: data.s || data.symbol || SYMBOL,
-        last: data.c || data.lastPrice || data.price,
-        changePercent: data.P || data.priceChangePercent,
-        bid: data.b || data.bidPrice,
-        ask: data.a || data.askPrice,
-        high: data.h || data.highPrice,
-        low: data.l || data.lowPrice,
-        eventTime: data.E || data.closeTime || Date.now()
-      };
-    }
-
-    function updateDisplay(payload, source = "Live") {
-      const ticker = normalizeTickerPayload(payload);
-
-      if (!ticker) {
-        console.warn("Unsupported ticker payload:", payload);
-        return;
-      }
-
-      priceEl.textContent = formatPHP(ticker.last);
-      changeEl.textContent = `24H ${formatPercent(ticker.changePercent)}`;
-
-      const changeNumber = Number(ticker.changePercent);
-      changeEl.classList.toggle("up", Number.isFinite(changeNumber) && changeNumber > 0);
-      changeEl.classList.toggle("down", Number.isFinite(changeNumber) && changeNumber < 0);
-
-      bidEl.textContent = formatPHP(ticker.bid);
-      askEl.textContent = formatPHP(ticker.ask);
-      highEl.textContent = formatPHP(ticker.high);
-      lowEl.textContent = formatPHP(ticker.low);
-
-      lastLiveUpdateAt = Date.now();
-
-      statusEl.textContent =
-        `${source} | Last update: ${new Date().toLocaleTimeString()}`;
-    }
-
-    async function loadRestData(source = "REST fallback") {
-      const url = `${REST_24H_URL}&_=${Date.now()}`;
-
-      const response = await fetch(url, {
-        method: "GET",
-        cache: "no-store"
-      });
-
-      if (!response.ok) {
-        throw new Error(`REST HTTP ${response.status}`);
-      }
-
-      const data = await response.json();
-      updateDisplay(data, source);
-    }
-
-    async function loadInitialRestData() {
-      try {
-        await loadRestData("REST");
-      } catch (error) {
-        console.warn("Initial REST load failed:", error);
-        statusEl.textContent = "REST failed. Waiting for WebSocket live price...";
-      }
-    }
-
-    function startRestFallbackPolling() {
-      clearInterval(restPollTimer);
-
-      restPollTimer = setInterval(async () => {
-        /*
-          If WebSocket has not delivered data for 20 seconds,
-          use REST so the page still works on networks/browsers
-          that block WebSocket traffic.
-        */
-        const stale = Date.now() - lastLiveUpdateAt > 20000;
-
-        if (!stale) {
-          return;
-        }
-
-        try {
-          await loadRestData("REST fallback");
-        } catch (error) {
-          console.warn("REST fallback polling failed:", error);
-        }
-      }, 15000);
-    }
-
-    function cleanupSocket() {
-      clearTimeout(reconnectTimer);
-      clearInterval(pingTimer);
-
-      reconnectTimer = null;
-      pingTimer = null;
-
-      if (socket) {
-        socket.onopen = null;
-        socket.onmessage = null;
-        socket.onerror = null;
-        socket.onclose = null;
-
-        try {
-          socket.close();
-        } catch (error) {
-          console.warn(error);
-        }
-
-        socket = null;
-      }
-    }
-
-    function connectSocket() {
-      cleanupSocket();
-
-      manualClose = false;
-      statusEl.textContent = "Connecting to Coins.ph WebSocket...";
-
-      try {
-        socket = new WebSocket(WS_URL);
-      } catch (error) {
-        console.error("WebSocket constructor failed:", error);
-        scheduleReconnect();
-        return;
-      }
-
-      socket.onopen = () => {
-        reconnectAttempts = 0;
-        statusEl.textContent = "Connected. Waiting for live BTC/PHP price...";
-
-        /*
-          Browser JavaScript cannot send native WebSocket ping frames.
-          Coins.ph documents JSON ping/pong messages, so we send this
-          every 2 minutes, safely under the 5-minute disconnect window.
-        */
-        pingTimer = setInterval(() => {
-          if (socket && socket.readyState === WebSocket.OPEN) {
-            socket.send(JSON.stringify({ ping: Date.now() }));
-          }
-        }, 120000);
-      };
-
-      socket.onmessage = event => {
-        try {
-          const payload = JSON.parse(event.data);
-
-          if (payload.pong) {
-            return;
-          }
-
-          if (payload.result === null && payload.id) {
-            return;
-          }
-
-          if (payload.code || payload.msg || payload.desc) {
-            console.warn("Coins.ph WebSocket message:", payload);
-            statusEl.textContent = payload.msg || payload.desc || "WebSocket returned a message.";
-            return;
-          }
-
-          updateDisplay(payload, "Live");
-        } catch (error) {
-          console.warn("Bad WebSocket message:", event.data, error);
-        }
-      };
-
-      socket.onerror = error => {
-        console.error("WebSocket error:", error);
-        statusEl.textContent = "WebSocket error. Trying REST fallback...";
-      };
-
-      socket.onclose = event => {
-        clearInterval(pingTimer);
-
-        if (manualClose) {
-          return;
-        }
-
-        console.warn("WebSocket closed:", event.code, event.reason);
-        scheduleReconnect();
-      };
-    }
-
-    function scheduleReconnect() {
-      reconnectAttempts += 1;
-
-      const delay = Math.min(30000, 3000 * reconnectAttempts);
-
-      statusEl.textContent =
-        `Disconnected. Reconnecting in ${Math.round(delay / 1000)}s...`;
-
-      clearTimeout(reconnectTimer);
-
-      reconnectTimer = setTimeout(() => {
-        connectSocket();
-      }, delay);
-    }
-
-    function manualReconnect() {
-      manualClose = true;
-      reconnectAttempts = 0;
-      cleanupSocket();
-      loadInitialRestData();
-      connectSocket();
-    }
-
-    async function goFullscreen() {
-      try {
-        if (!document.fullscreenElement) {
-          await document.documentElement.requestFullscreen();
-        }
-      } catch (error) {
-        console.error(error);
-        statusEl.textContent =
-          "Fullscreen blocked. Tap the button again or check browser settings.";
-      }
-    }
-
-    async function keepScreenAwake() {
-      try {
-        if (!("wakeLock" in navigator)) {
-          statusEl.textContent =
-            "Screen Wake Lock is not supported on this browser.";
-          return;
-        }
-
-        wakeLock = await navigator.wakeLock.request("screen");
-
-        wakeLock.addEventListener("release", () => {
-          wakeLock = null;
-          statusEl.textContent = "Screen wake lock released.";
-        });
-
-        statusEl.textContent = "Screen wake lock active.";
-      } catch (error) {
-        console.error(error);
-        statusEl.textContent =
-          "Wake lock failed. Use fullscreen and keep the device plugged in.";
-      }
-    }
-
-    document.addEventListener("visibilitychange", async () => {
-      if (document.visibilityState === "visible" && wakeLock === null) {
-        try {
-          await keepScreenAwake();
-        } catch (error) {
-          console.warn(error);
-        }
-      }
-    });
-
-    window.addEventListener("beforeunload", () => {
-      manualClose = true;
-      cleanupSocket();
-      clearInterval(restPollTimer);
-    });
-
-    loadInitialRestData();
-    startRestFallbackPolling();
-    connectSocket();
+    startKlineRefresh();
   </script>
 </body>
 </html>
