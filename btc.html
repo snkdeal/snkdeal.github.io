@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#000000" />
 
-  <title>BTC/PHP</title>
+  <title>BTC/PHP XRP/PHP</title>
 
   <style>
     * {
@@ -61,30 +61,16 @@
       word-break: break-word;
     }
 
-    .change {
+    .xrp-price {
       margin-top: 18px;
-      font-size: clamp(22px, 6vw, 56px);
-      font-weight: 800;
-    }
-
-    .change.up {
-      color: #30d158;
-    }
-
-    .change.down {
-      color: #ff453a;
-    }
-
-    .mini {
-      margin-top: 16px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 18px;
-      flex-wrap: wrap;
-      font-size: clamp(13px, 3.5vw, 24px);
-      font-weight: 700;
-      opacity: 0.55;
+      width: 100%;
+      font-size: clamp(32px, 8vw, 96px);
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: -0.05em;
+      opacity: 0.78;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
 
     .controls {
@@ -149,12 +135,9 @@
         letter-spacing: -0.04em;
       }
 
-      .change {
-        font-size: clamp(22px, 7vw, 36px);
-      }
-
-      .mini {
-        gap: 12px;
+      .xrp-price {
+        font-size: clamp(28px, 9vw, 48px);
+        letter-spacing: -0.04em;
       }
     }
 
@@ -167,13 +150,9 @@
         font-size: clamp(43px, 15.6vh, 96px);
       }
 
-      .change {
-        margin-top: 8px;
-        font-size: clamp(20px, 8vh, 42px);
-      }
-
-      .mini {
-        margin-top: 8px;
+      .xrp-price {
+        margin-top: 10px;
+        font-size: clamp(28px, 10vh, 58px);
       }
 
       button {
@@ -189,14 +168,8 @@
   <main class="app">
     <div id="time" class="time">--:--</div>
 
-    <div id="price" class="price">---</div>
-
-    <div id="change" class="change">--</div>
-
-    <div class="mini">
-      <div>B <span id="bid">--</span></div>
-      <div>A <span id="ask">--</span></div>
-    </div>
+    <div id="btcPrice" class="price">---</div>
+    <div id="xrpPrice" class="xrp-price">---</div>
 
     <div id="dot" class="dot"></div>
 
@@ -207,29 +180,24 @@
   </main>
 
   <script>
-    const SYMBOL = "BTCPHP";
-    const STREAM_SYMBOL = SYMBOL.toLowerCase();
-
-    const WS_URL =
-      `wss://wsapi.pro.coins.ph/openapi/quote/ws/v3/${STREAM_SYMBOL}@ticker`;
-
-    const REST_URL =
-      `https://api.pro.coins.ph/openapi/quote/v1/ticker/24hr?symbol=${SYMBOL}`;
+    const SYMBOLS = ["BTCPHP", "XRPPHP"];
 
     const timeEl = document.getElementById("time");
-    const priceEl = document.getElementById("price");
-    const changeEl = document.getElementById("change");
-    const bidEl = document.getElementById("bid");
-    const askEl = document.getElementById("ask");
+    const btcPriceEl = document.getElementById("btcPrice");
+    const xrpPriceEl = document.getElementById("xrpPrice");
     const dotEl = document.getElementById("dot");
 
-    let socket = null;
+    const sockets = {};
+    const lastUpdateAt = {
+      BTCPHP: 0,
+      XRPPHP: 0
+    };
+
     let reconnectTimer = null;
     let fallbackTimer = null;
     let timeTimer = null;
 
     let reconnectAttempts = 0;
-    let lastUpdateAt = 0;
     let manualClose = false;
 
     function updateTime() {
@@ -256,21 +224,19 @@
       return number.toFixed(2);
     }
 
-    function formatPercent(value) {
-      const number = Number(value);
-
-      if (!Number.isFinite(number)) {
-        return "--";
-      }
-
-      return `${number > 0 ? "+" : ""}${number.toFixed(2)}%`;
+    function getWsUrl(symbol) {
+      return `wss://wsapi.pro.coins.ph/openapi/quote/ws/v3/${symbol.toLowerCase()}@ticker`;
     }
 
-    function normalize(payload) {
+    function getRestUrl(symbol) {
+      return `https://api.pro.coins.ph/openapi/quote/v1/ticker/24hr?symbol=${symbol}`;
+    }
+
+    function normalize(payload, symbol) {
       let data = payload && payload.data ? payload.data : payload;
 
       if (Array.isArray(data)) {
-        data = data.find(item => String(item.symbol || item.s).toUpperCase() === SYMBOL);
+        data = data.find(item => String(item.symbol || item.s).toUpperCase() === symbol);
       }
 
       if (!data || typeof data !== "object") {
@@ -278,36 +244,32 @@
       }
 
       return {
-        last: data.c || data.lastPrice,
-        change: data.P || data.priceChangePercent,
-        bid: data.b || data.bidPrice,
-        ask: data.a || data.askPrice
+        symbol: String(data.symbol || data.s || symbol).toUpperCase(),
+        last: data.c || data.lastPrice
       };
     }
 
-    function render(payload, source) {
-      const data = normalize(payload);
+    function render(payload, source, expectedSymbol) {
+      const data = normalize(payload, expectedSymbol);
 
       if (!data) {
         return;
       }
 
-      const change = Number(data.change);
+      if (data.symbol === "BTCPHP") {
+        btcPriceEl.textContent = formatNumber(data.last);
+      }
 
-      priceEl.textContent = formatNumber(data.last);
-      changeEl.textContent = formatPercent(data.change);
-      bidEl.textContent = formatNumber(data.bid);
-      askEl.textContent = formatNumber(data.ask);
+      if (data.symbol === "XRPPHP") {
+        xrpPriceEl.textContent = formatNumber(data.last);
+      }
 
-      changeEl.classList.toggle("up", Number.isFinite(change) && change > 0);
-      changeEl.classList.toggle("down", Number.isFinite(change) && change < 0);
-
-      lastUpdateAt = Date.now();
+      lastUpdateAt[data.symbol] = Date.now();
       setDot(source === "ws" ? "live" : "warn");
     }
 
-    async function fetchRest() {
-      const response = await fetch(`${REST_URL}&_=${Date.now()}`, {
+    async function fetchRest(symbol) {
+      const response = await fetch(`${getRestUrl(symbol)}&_=${Date.now()}`, {
         cache: "no-store"
       });
 
@@ -316,10 +278,16 @@
       }
 
       const payload = await response.json();
-      render(payload, "rest");
+      render(payload, "rest", symbol);
     }
 
-    function clearSocketOnly() {
+    async function fetchAllRest() {
+      await Promise.allSettled(SYMBOLS.map(symbol => fetchRest(symbol)));
+    }
+
+    function clearSocket(symbol) {
+      const socket = sockets[symbol];
+
       if (!socket) {
         return;
       }
@@ -333,7 +301,11 @@
         socket.close();
       } catch (_) {}
 
-      socket = null;
+      sockets[symbol] = null;
+    }
+
+    function clearAllSockets() {
+      SYMBOLS.forEach(clearSocket);
     }
 
     function clearReconnect() {
@@ -341,26 +313,23 @@
       reconnectTimer = null;
     }
 
-    function connectSocket() {
-      clearReconnect();
-      clearSocketOnly();
-
-      manualClose = false;
+    function connectSocket(symbol) {
+      clearSocket(symbol);
       setDot("warn");
 
       try {
-        socket = new WebSocket(WS_URL);
+        sockets[symbol] = new WebSocket(getWsUrl(symbol));
       } catch (_) {
         scheduleReconnect();
         return;
       }
 
-      socket.onopen = () => {
+      sockets[symbol].onopen = () => {
         reconnectAttempts = 0;
         setDot("live");
       };
 
-      socket.onmessage = event => {
+      sockets[symbol].onmessage = event => {
         try {
           const payload = JSON.parse(event.data);
 
@@ -368,19 +337,27 @@
             return;
           }
 
-          render(payload, "ws");
+          render(payload, "ws", symbol);
         } catch (_) {}
       };
 
-      socket.onerror = () => {
+      sockets[symbol].onerror = () => {
         setDot("warn");
       };
 
-      socket.onclose = () => {
+      sockets[symbol].onclose = () => {
         if (!manualClose) {
           scheduleReconnect();
         }
       };
+    }
+
+    function connectAllSockets() {
+      clearReconnect();
+      clearAllSockets();
+
+      manualClose = false;
+      SYMBOLS.forEach(connectSocket);
     }
 
     function scheduleReconnect() {
@@ -392,7 +369,7 @@
       const delay = Math.min(30000, reconnectAttempts * 3000);
 
       reconnectTimer = setTimeout(() => {
-        connectSocket();
+        connectAllSockets();
       }, delay);
     }
 
@@ -401,29 +378,31 @@
       reconnectAttempts = 0;
 
       clearReconnect();
-      clearSocketOnly();
+      clearAllSockets();
 
       try {
-        await fetchRest();
+        await fetchAllRest();
       } catch (_) {
         setDot("dead");
       }
 
-      connectSocket();
+      connectAllSockets();
     }
 
     function startFallback() {
       clearInterval(fallbackTimer);
 
       fallbackTimer = setInterval(async () => {
-        const stale = Date.now() - lastUpdateAt > 20000;
+        const staleSymbols = SYMBOLS.filter(symbol => {
+          return Date.now() - lastUpdateAt[symbol] > 20000;
+        });
 
-        if (!stale) {
+        if (!staleSymbols.length) {
           return;
         }
 
         try {
-          await fetchRest();
+          await Promise.allSettled(staleSymbols.map(symbol => fetchRest(symbol)));
         } catch (_) {
           setDot("dead");
         }
@@ -442,7 +421,7 @@
       manualClose = true;
 
       clearReconnect();
-      clearSocketOnly();
+      clearAllSockets();
       clearInterval(fallbackTimer);
       clearInterval(timeTimer);
     });
@@ -451,20 +430,25 @@
       if (document.visibilityState === "visible") {
         updateTime();
 
-        if (!socket || socket.readyState === WebSocket.CLOSED) {
-          connectSocket();
+        const needsReconnect = SYMBOLS.some(symbol => {
+          const socket = sockets[symbol];
+          return !socket || socket.readyState === WebSocket.CLOSED;
+        });
+
+        if (needsReconnect) {
+          connectAllSockets();
         }
 
-        fetchRest().catch(() => setDot("warn"));
+        fetchAllRest().catch(() => setDot("warn"));
       }
     });
 
     updateTime();
     timeTimer = setInterval(updateTime, 1000);
 
-    fetchRest().catch(() => setDot("warn"));
+    fetchAllRest().catch(() => setDot("warn"));
     startFallback();
-    connectSocket();
+    connectAllSockets();
   </script>
 </body>
 </html>
