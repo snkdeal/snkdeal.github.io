@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#000000" />
 
-  <title>BTC/PHP XRP/PHP</title>
+  <title>BTC/PHP</title>
 
   <style>
     * {
@@ -61,16 +61,17 @@
       word-break: break-word;
     }
 
-    .xrp-price {
+    .alert-status {
       margin-top: 18px;
-      width: 100%;
-      font-size: clamp(32px, 8vw, 96px);
-      line-height: 1;
-      font-weight: 900;
-      letter-spacing: -0.05em;
-      opacity: 0.78;
-      overflow-wrap: anywhere;
-      word-break: break-word;
+      min-height: 1.2em;
+      font-size: clamp(14px, 3.8vw, 26px);
+      font-weight: 800;
+      opacity: 0.7;
+    }
+
+    .alert-status.triggered {
+      color: #ff9f0a;
+      opacity: 1;
     }
 
     .controls {
@@ -125,6 +126,89 @@
       background: #ff453a;
     }
 
+    .panel {
+      position: fixed;
+      left: 14px;
+      right: 14px;
+      bottom: 74px;
+      padding: 16px;
+      border-radius: 22px;
+      background: rgba(28, 28, 30, 0.96);
+      backdrop-filter: blur(18px);
+      z-index: 10;
+      display: none;
+      text-align: left;
+    }
+
+    .panel.open {
+      display: block;
+    }
+
+    .panel-title {
+      margin-bottom: 14px;
+      font-size: 16px;
+      font-weight: 900;
+      opacity: 0.9;
+    }
+
+    .field {
+      display: grid;
+      grid-template-columns: 112px 1fr;
+      gap: 10px;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .field label {
+      font-size: 14px;
+      font-weight: 800;
+      opacity: 0.7;
+    }
+
+    .field input {
+      width: 100%;
+      min-width: 0;
+      padding: 12px 13px;
+      border: 0;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      font-size: 18px;
+      font-weight: 800;
+      outline: none;
+    }
+
+    .field input::placeholder {
+      color: rgba(255, 255, 255, 0.35);
+    }
+
+    .panel-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .panel-actions button {
+      width: auto;
+      height: 44px;
+      flex: 1;
+      border-radius: 14px;
+      font-size: 15px;
+    }
+
+    .save-btn {
+      background: #30d158;
+      color: #000;
+    }
+
+    .clear-btn {
+      background: rgba(255, 69, 58, 0.26);
+    }
+
+    .close-btn {
+      background: rgba(255, 255, 255, 0.14);
+    }
+
     @media (max-width: 430px) {
       .app {
         padding: 16px;
@@ -135,9 +219,12 @@
         letter-spacing: -0.04em;
       }
 
-      .xrp-price {
-        font-size: clamp(28px, 9vw, 48px);
-        letter-spacing: -0.04em;
+      .alert-status {
+        font-size: clamp(14px, 4.2vw, 20px);
+      }
+
+      .field {
+        grid-template-columns: 92px 1fr;
       }
     }
 
@@ -150,15 +237,21 @@
         font-size: clamp(43px, 15.6vh, 96px);
       }
 
-      .xrp-price {
-        margin-top: 10px;
-        font-size: clamp(28px, 10vh, 58px);
+      .alert-status {
+        margin-top: 8px;
+        font-size: clamp(13px, 4vh, 22px);
       }
 
       button {
         width: 40px;
         height: 40px;
         font-size: 20px;
+      }
+
+      .panel {
+        left: 70px;
+        right: 70px;
+        bottom: 60px;
       }
     }
   </style>
@@ -168,37 +261,74 @@
   <main class="app">
     <div id="time" class="time">--:--</div>
 
-    <div id="btcPrice" class="price">---</div>
-    <div id="xrpPrice" class="xrp-price">---</div>
+    <div id="price" class="price">---</div>
+    <div id="alertStatus" class="alert-status"></div>
 
     <div id="dot" class="dot"></div>
 
+    <div id="alertPanel" class="panel">
+      <div class="panel-title">BTC/PHP Price Alert</div>
+
+      <div class="field">
+        <label for="aboveInput">Went above</label>
+        <input id="aboveInput" type="number" inputmode="decimal" placeholder="optional" />
+      </div>
+
+      <div class="field">
+        <label for="belowInput">Went below</label>
+        <input id="belowInput" type="number" inputmode="decimal" placeholder="optional" />
+      </div>
+
+      <div class="panel-actions">
+        <button type="button" class="save-btn" onclick="saveAlert()">Save</button>
+        <button type="button" class="clear-btn" onclick="clearAlert()">Clear</button>
+        <button type="button" class="close-btn" onclick="toggleAlertPanel()">Close</button>
+      </div>
+    </div>
+
     <div class="controls">
       <button type="button" onclick="manualRefresh()" aria-label="Refresh">↻</button>
+      <button type="button" onclick="toggleAlertPanel()" aria-label="Price alert">!</button>
       <button type="button" onclick="goFullscreen()" aria-label="Fullscreen">⛶</button>
     </div>
   </main>
 
   <script>
-    const SYMBOLS = ["BTCPHP", "XRPPHP"];
+    const SYMBOL = "BTCPHP";
+    const STREAM_SYMBOL = SYMBOL.toLowerCase();
+
+    const WS_URL =
+      `wss://wsapi.pro.coins.ph/openapi/quote/ws/v3/${STREAM_SYMBOL}@ticker`;
+
+    const REST_URL =
+      `https://api.pro.coins.ph/openapi/quote/v1/ticker/24hr?symbol=${SYMBOL}`;
+
+    const ALERT_KEY = "btcphp_price_alert";
 
     const timeEl = document.getElementById("time");
-    const btcPriceEl = document.getElementById("btcPrice");
-    const xrpPriceEl = document.getElementById("xrpPrice");
+    const priceEl = document.getElementById("price");
+    const alertStatusEl = document.getElementById("alertStatus");
+    const alertPanelEl = document.getElementById("alertPanel");
+    const aboveInputEl = document.getElementById("aboveInput");
+    const belowInputEl = document.getElementById("belowInput");
     const dotEl = document.getElementById("dot");
 
-    const sockets = {};
-    const lastUpdateAt = {
-      BTCPHP: 0,
-      XRPPHP: 0
-    };
-
+    let socket = null;
     let reconnectTimer = null;
     let fallbackTimer = null;
     let timeTimer = null;
 
     let reconnectAttempts = 0;
+    let lastUpdateAt = 0;
     let manualClose = false;
+    let currentPrice = null;
+
+    let alertConfig = {
+      above: null,
+      below: null,
+      aboveTriggered: false,
+      belowTriggered: false
+    };
 
     function updateTime() {
       const now = new Date();
@@ -224,19 +354,11 @@
       return number.toFixed(2);
     }
 
-    function getWsUrl(symbol) {
-      return `wss://wsapi.pro.coins.ph/openapi/quote/ws/v3/${symbol.toLowerCase()}@ticker`;
-    }
-
-    function getRestUrl(symbol) {
-      return `https://api.pro.coins.ph/openapi/quote/v1/ticker/24hr?symbol=${symbol}`;
-    }
-
-    function normalize(payload, symbol) {
+    function normalize(payload) {
       let data = payload && payload.data ? payload.data : payload;
 
       if (Array.isArray(data)) {
-        data = data.find(item => String(item.symbol || item.s).toUpperCase() === symbol);
+        data = data.find(item => String(item.symbol || item.s).toUpperCase() === SYMBOL);
       }
 
       if (!data || typeof data !== "object") {
@@ -244,32 +366,131 @@
       }
 
       return {
-        symbol: String(data.symbol || data.s || symbol).toUpperCase(),
         last: data.c || data.lastPrice
       };
     }
 
-    function render(payload, source, expectedSymbol) {
-      const data = normalize(payload, expectedSymbol);
+    function parseOptionalPrice(value) {
+      const trimmed = String(value || "").trim();
+
+      if (!trimmed) {
+        return null;
+      }
+
+      const number = Number(trimmed);
+
+      if (!Number.isFinite(number) || number <= 0) {
+        return null;
+      }
+
+      return number;
+    }
+
+    function loadAlert() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(ALERT_KEY));
+
+        if (!saved || typeof saved !== "object") {
+          return;
+        }
+
+        alertConfig.above = Number.isFinite(Number(saved.above)) ? Number(saved.above) : null;
+        alertConfig.below = Number.isFinite(Number(saved.below)) ? Number(saved.below) : null;
+        alertConfig.aboveTriggered = Boolean(saved.aboveTriggered);
+        alertConfig.belowTriggered = Boolean(saved.belowTriggered);
+      } catch (_) {}
+    }
+
+    function persistAlert() {
+      localStorage.setItem(ALERT_KEY, JSON.stringify(alertConfig));
+    }
+
+    function updateAlertInputs() {
+      aboveInputEl.value = alertConfig.above === null ? "" : alertConfig.above;
+      belowInputEl.value = alertConfig.below === null ? "" : alertConfig.below;
+    }
+
+    function updateAlertStatus(message, triggered) {
+      if (message) {
+        alertStatusEl.textContent = message;
+        alertStatusEl.classList.toggle("triggered", Boolean(triggered));
+        return;
+      }
+
+      const parts = [];
+
+      if (alertConfig.above !== null) {
+        parts.push(`above ${formatNumber(alertConfig.above)}`);
+      }
+
+      if (alertConfig.below !== null) {
+        parts.push(`below ${formatNumber(alertConfig.below)}`);
+      }
+
+      alertStatusEl.textContent = parts.length ? `Alert set: ${parts.join(" / ")}` : "";
+      alertStatusEl.classList.remove("triggered");
+    }
+
+    function notifyAlert(message) {
+      updateAlertStatus(message, true);
+
+      if ("vibrate" in navigator) {
+        navigator.vibrate([250, 120, 250]);
+      }
+
+      if ("Notification" in window && Notification.permission === "granted") {
+        new Notification("BTC/PHP Alert", {
+          body: message
+        });
+      }
+    }
+
+    function checkAlert(price) {
+      if (!Number.isFinite(price)) {
+        return;
+      }
+
+      if (
+        alertConfig.above !== null &&
+        !alertConfig.aboveTriggered &&
+        price >= alertConfig.above
+      ) {
+        alertConfig.aboveTriggered = true;
+        persistAlert();
+        notifyAlert(`BTC/PHP went above ${formatNumber(alertConfig.above)}`);
+      }
+
+      if (
+        alertConfig.below !== null &&
+        !alertConfig.belowTriggered &&
+        price <= alertConfig.below
+      ) {
+        alertConfig.belowTriggered = true;
+        persistAlert();
+        notifyAlert(`BTC/PHP went below ${formatNumber(alertConfig.below)}`);
+      }
+    }
+
+    function render(payload, source) {
+      const data = normalize(payload);
 
       if (!data) {
         return;
       }
 
-      if (data.symbol === "BTCPHP") {
-        btcPriceEl.textContent = formatNumber(data.last);
-      }
+      const price = Number(data.last);
 
-      if (data.symbol === "XRPPHP") {
-        xrpPriceEl.textContent = formatNumber(data.last);
-      }
+      priceEl.textContent = formatNumber(price);
+      currentPrice = Number.isFinite(price) ? price : currentPrice;
 
-      lastUpdateAt[data.symbol] = Date.now();
+      checkAlert(currentPrice);
+
+      lastUpdateAt = Date.now();
       setDot(source === "ws" ? "live" : "warn");
     }
 
-    async function fetchRest(symbol) {
-      const response = await fetch(`${getRestUrl(symbol)}&_=${Date.now()}`, {
+    async function fetchRest() {
+      const response = await fetch(`${REST_URL}&_=${Date.now()}`, {
         cache: "no-store"
       });
 
@@ -278,16 +499,10 @@
       }
 
       const payload = await response.json();
-      render(payload, "rest", symbol);
+      render(payload, "rest");
     }
 
-    async function fetchAllRest() {
-      await Promise.allSettled(SYMBOLS.map(symbol => fetchRest(symbol)));
-    }
-
-    function clearSocket(symbol) {
-      const socket = sockets[symbol];
-
+    function clearSocketOnly() {
       if (!socket) {
         return;
       }
@@ -301,11 +516,7 @@
         socket.close();
       } catch (_) {}
 
-      sockets[symbol] = null;
-    }
-
-    function clearAllSockets() {
-      SYMBOLS.forEach(clearSocket);
+      socket = null;
     }
 
     function clearReconnect() {
@@ -313,23 +524,26 @@
       reconnectTimer = null;
     }
 
-    function connectSocket(symbol) {
-      clearSocket(symbol);
+    function connectSocket() {
+      clearReconnect();
+      clearSocketOnly();
+
+      manualClose = false;
       setDot("warn");
 
       try {
-        sockets[symbol] = new WebSocket(getWsUrl(symbol));
+        socket = new WebSocket(WS_URL);
       } catch (_) {
         scheduleReconnect();
         return;
       }
 
-      sockets[symbol].onopen = () => {
+      socket.onopen = () => {
         reconnectAttempts = 0;
         setDot("live");
       };
 
-      sockets[symbol].onmessage = event => {
+      socket.onmessage = event => {
         try {
           const payload = JSON.parse(event.data);
 
@@ -337,27 +551,19 @@
             return;
           }
 
-          render(payload, "ws", symbol);
+          render(payload, "ws");
         } catch (_) {}
       };
 
-      sockets[symbol].onerror = () => {
+      socket.onerror = () => {
         setDot("warn");
       };
 
-      sockets[symbol].onclose = () => {
+      socket.onclose = () => {
         if (!manualClose) {
           scheduleReconnect();
         }
       };
-    }
-
-    function connectAllSockets() {
-      clearReconnect();
-      clearAllSockets();
-
-      manualClose = false;
-      SYMBOLS.forEach(connectSocket);
     }
 
     function scheduleReconnect() {
@@ -369,7 +575,7 @@
       const delay = Math.min(30000, reconnectAttempts * 3000);
 
       reconnectTimer = setTimeout(() => {
-        connectAllSockets();
+        connectSocket();
       }, delay);
     }
 
@@ -378,35 +584,78 @@
       reconnectAttempts = 0;
 
       clearReconnect();
-      clearAllSockets();
+      clearSocketOnly();
 
       try {
-        await fetchAllRest();
+        await fetchRest();
       } catch (_) {
         setDot("dead");
       }
 
-      connectAllSockets();
+      connectSocket();
     }
 
     function startFallback() {
       clearInterval(fallbackTimer);
 
       fallbackTimer = setInterval(async () => {
-        const staleSymbols = SYMBOLS.filter(symbol => {
-          return Date.now() - lastUpdateAt[symbol] > 20000;
-        });
+        const stale = Date.now() - lastUpdateAt > 20000;
 
-        if (!staleSymbols.length) {
+        if (!stale) {
           return;
         }
 
         try {
-          await Promise.allSettled(staleSymbols.map(symbol => fetchRest(symbol)));
+          await fetchRest();
         } catch (_) {
           setDot("dead");
         }
       }, 15000);
+    }
+
+    function toggleAlertPanel() {
+      alertPanelEl.classList.toggle("open");
+    }
+
+    async function saveAlert() {
+      const above = parseOptionalPrice(aboveInputEl.value);
+      const below = parseOptionalPrice(belowInputEl.value);
+
+      alertConfig = {
+        above,
+        below,
+        aboveTriggered: false,
+        belowTriggered: false
+      };
+
+      persistAlert();
+      updateAlertInputs();
+      updateAlertStatus();
+
+      if ("Notification" in window && Notification.permission === "default") {
+        try {
+          await Notification.requestPermission();
+        } catch (_) {}
+      }
+
+      if (currentPrice !== null) {
+        checkAlert(currentPrice);
+      }
+
+      alertPanelEl.classList.remove("open");
+    }
+
+    function clearAlert() {
+      alertConfig = {
+        above: null,
+        below: null,
+        aboveTriggered: false,
+        belowTriggered: false
+      };
+
+      localStorage.removeItem(ALERT_KEY);
+      updateAlertInputs();
+      updateAlertStatus();
     }
 
     async function goFullscreen() {
@@ -421,7 +670,7 @@
       manualClose = true;
 
       clearReconnect();
-      clearAllSockets();
+      clearSocketOnly();
       clearInterval(fallbackTimer);
       clearInterval(timeTimer);
     });
@@ -430,25 +679,24 @@
       if (document.visibilityState === "visible") {
         updateTime();
 
-        const needsReconnect = SYMBOLS.some(symbol => {
-          const socket = sockets[symbol];
-          return !socket || socket.readyState === WebSocket.CLOSED;
-        });
-
-        if (needsReconnect) {
-          connectAllSockets();
+        if (!socket || socket.readyState === WebSocket.CLOSED) {
+          connectSocket();
         }
 
-        fetchAllRest().catch(() => setDot("warn"));
+        fetchRest().catch(() => setDot("warn"));
       }
     });
+
+    loadAlert();
+    updateAlertInputs();
+    updateAlertStatus();
 
     updateTime();
     timeTimer = setInterval(updateTime, 1000);
 
-    fetchAllRest().catch(() => setDot("warn"));
+    fetchRest().catch(() => setDot("warn"));
     startFallback();
-    connectAllSockets();
+    connectSocket();
   </script>
 </body>
 </html>
