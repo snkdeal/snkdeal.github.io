@@ -82,10 +82,7 @@ function formatNumber(value) {
     return "--";
   }
 
-  return number.toLocaleString("en-PH", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  });
+  return number.toFixed(2);
 }
 
 function normalize(payload) {
