@@ -41,17 +41,19 @@
       text-align: center;
     }
 
-    .pair {
-      font-size: clamp(14px, 4vw, 30px);
-      letter-spacing: 0.16em;
+    .time {
+      position: fixed;
+      top: 16px;
+      right: 18px;
+      font-size: clamp(12px, 3vw, 20px);
       font-weight: 800;
       opacity: 0.55;
-      margin-bottom: 18px;
+      z-index: 5;
     }
 
     .price {
       width: 100%;
-      font-size: clamp(38px, 11vw, 140px);
+      font-size: clamp(46px, 13.2vw, 168px);
       line-height: 1;
       font-weight: 900;
       letter-spacing: -0.05em;
@@ -143,7 +145,7 @@
       }
 
       .price {
-        font-size: clamp(34px, 12vw, 58px);
+        font-size: clamp(41px, 14.4vw, 70px);
         letter-spacing: -0.04em;
       }
 
@@ -161,12 +163,8 @@
         padding: 10px 70px;
       }
 
-      .pair {
-        margin-bottom: 8px;
-      }
-
       .price {
-        font-size: clamp(36px, 13vh, 80px);
+        font-size: clamp(43px, 15.6vh, 96px);
       }
 
       .change {
@@ -189,7 +187,7 @@
 
 <body>
   <main class="app">
-    <!--<div class="pair">BTC/PHP</div>-->
+    <div id="time" class="time">--:--</div>
 
     <div id="price" class="price">---</div>
 
@@ -218,6 +216,7 @@
     const REST_URL =
       `https://api.pro.coins.ph/openapi/quote/v1/ticker/24hr?symbol=${SYMBOL}`;
 
+    const timeEl = document.getElementById("time");
     const priceEl = document.getElementById("price");
     const changeEl = document.getElementById("change");
     const bidEl = document.getElementById("bid");
@@ -227,10 +226,21 @@
     let socket = null;
     let reconnectTimer = null;
     let fallbackTimer = null;
+    let timeTimer = null;
 
     let reconnectAttempts = 0;
     let lastUpdateAt = 0;
     let manualClose = false;
+
+    function updateTime() {
+      const now = new Date();
+
+      timeEl.textContent = now.toLocaleTimeString("en-PH", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true
+      }).toLowerCase();
+    }
 
     function setDot(state) {
       dotEl.className = `dot ${state}`;
@@ -434,10 +444,13 @@
       clearReconnect();
       clearSocketOnly();
       clearInterval(fallbackTimer);
+      clearInterval(timeTimer);
     });
 
     document.addEventListener("visibilitychange", () => {
       if (document.visibilityState === "visible") {
+        updateTime();
+
         if (!socket || socket.readyState === WebSocket.CLOSED) {
           connectSocket();
         }
@@ -445,6 +458,9 @@
         fetchRest().catch(() => setDot("warn"));
       }
     });
+
+    updateTime();
+    timeTimer = setInterval(updateTime, 1000);
 
     fetchRest().catch(() => setDot("warn"));
     startFallback();
