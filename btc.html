@@ -212,7 +212,6 @@
 
     const WS_URL = `wss://wsapi.pro.coins.ph/openapi/quote/ws/v3/${STREAM_SYMBOL}@ticker`;
     const TICKER_URL = `https://api.pro.coins.ph/openapi/quote/v1/ticker/24hr?symbol=${SYMBOL}`;
-    const KLINES_URL = `https://api.pro.coins.ph/openapi/quote/v1/klines?symbol=${SYMBOL}&interval=4h&limit=1`;
 
     const priceEl = document.getElementById("price");
     const changeEl = document.getElementById("change");
@@ -223,18 +222,15 @@
     let socket;
     let reconnectTimer;
     let fallbackTimer;
-    let klineTimer;
 
     let reconnectAttempts = 0;
     let lastUpdateAt = 0;
-    let lastPrice = null;
-    let open4h = null;
 
     function setDot(state) {
       dotEl.className = `dot ${state}`;
     }
 
-    function formatNumber(value, compact = false) {
+    function formatNumber(value) {
       const number = Number(value);
 
       if (!Number.isFinite(number)) {
@@ -243,10 +239,9 @@
 
       return new Intl.NumberFormat("en-PH", {
         style: "decimal",
-        notation: compact ? "compact" : "standard",
         useGrouping: false,
-        minimumFractionDigits: compact ? 0 : 2,
-        maximumFractionDigits: compact ? 1 : 2
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
       }).format(number);
     }
 
@@ -260,23 +255,6 @@
       return `${number > 0 ? "+" : ""}${number.toFixed(2)}%`;
     }
 
-    function updateChange() {
-      const last = Number(lastPrice);
-      const open = Number(open4h);
-
-      if (!Number.isFinite(last) || !Number.isFinite(open) || open === 0) {
-        changeEl.textContent = "--";
-        changeEl.classList.remove("up", "down");
-        return;
-      }
-
-      const change = ((last - open) / open) * 100;
-
-      changeEl.textContent = formatPercent(change);
-      changeEl.classList.toggle("up", change > 0);
-      changeEl.classList.toggle("down", change < 0);
-    }
-
     function normalize(payload) {
       const data = payload && payload.data ? payload.data : payload;
 
@@ -286,6 +264,7 @@
 
       return {
         last: data.c || data.lastPrice,
+        change: data.P || data.priceChangePercent,
         bid: data.b || data.bidPrice,
         ask: data.a || data.askPrice
       };
@@ -298,40 +277,21 @@
         return;
       }
 
-      lastPrice = data.last;
+      const change = Number(data.change);
 
       priceEl.textContent = formatNumber(data.last);
-      bidEl.textContent = formatNumber(data.bid, true);
-      askEl.textContent = formatNumber(data.ask, true);
+      changeEl.textContent = formatPercent(data.change);
+      bidEl.textContent = formatNumber(data.bid);
+      askEl.textContent = formatNumber(data.ask);
 
-      updateChange();
+      changeEl.classList.toggle("up", Number.isFinite(change) && change > 0);
+      changeEl.classList.toggle("down", Number.isFinite(change) && change < 0);
 
       lastUpdateAt = Date.now();
       setDot(source === "ws" ? "live" : "warn");
     }
 
-    async function fetch4hOpen() {
-      const response = await fetch(`${KLINES_URL}&_=${Date.now()}`, {
-        cache: "no-store"
-      });
-
-      if (!response.ok) {
-        throw new Error("Kline request failed");
-      }
-
-      const payload = await response.json();
-
-      if (!Array.isArray(payload) || !payload.length) {
-        throw new Error("No kline data");
-      }
-
-      open4h = payload[payload.length - 1][1];
-      updateChange();
-    }
-
     async function fetchTicker() {
-      await fetch4hOpen();
-
       const response = await fetch(`${TICKER_URL}&_=${Date.now()}`, {
         cache: "no-store"
       });
@@ -433,12 +393,6 @@
       }, 15000);
     }
 
-    function startKlineRefresh() {
-      klineTimer = setInterval(() => {
-        fetch4hOpen().catch(() => {});
-      }, 60000);
-    }
-
     async function goFullscreen() {
       try {
         if (!document.fullscreenElement) {
@@ -450,13 +404,12 @@
     window.addEventListener("beforeunload", () => {
       clearTimeout(reconnectTimer);
       clearInterval(fallbackTimer);
-      clearInterval(klineTimer);
       closeSocket();
     });
 
     document.addEventListener("visibilitychange", () => {
       if (document.visibilityState === "visible") {
-        fetch4hOpen().catch(() => {});
+        fetchTicker().catch(() => {});
 
         if (!socket || socket.readyState === WebSocket.CLOSED) {
           connectSocket();
@@ -467,7 +420,6 @@
     fetchTicker().catch(() => setDot("warn"));
     connectSocket();
     startFallback();
-    startKlineRefresh();
   </script>
 </body>
 </html>
