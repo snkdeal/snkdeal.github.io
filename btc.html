@@ -5,22 +5,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#000000" />
 
-  <title>BTC/PHP</title>
+  <title>Crypto/PHP</title>
 
   <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
   <main class="app">
+    <form id="coinForm" class="coin-form">
+      <input
+        id="coinInput"
+        class="coin-input"
+        type="text"
+        inputmode="latin"
+        autocomplete="off"
+        autocapitalize="characters"
+        spellcheck="false"
+        placeholder="BTC"
+        aria-label="Coin symbol"
+      />
+    </form>
+
     <div id="time" class="time">--:--</div>
 
-    <div id="price" class="price">---</div>
+    <section class="price-wrap">
+      <div id="pairLabel" class="pair-label">BTC/PHP</div>
+      <div id="price" class="price">---</div>
+      <div id="range" class="range">24h H -- / L --</div>
+    </section>
+
     <div id="alertStatus" class="alert-status"></div>
 
     <div id="dot" class="dot"></div>
 
     <div id="alertPanel" class="panel">
-      <div class="panel-title">BTC/PHP Price Alert</div>
+      <div id="panelTitle" class="panel-title">BTC/PHP Price Alert</div>
 
       <div class="field">
         <label for="aboveInput">Went above</label>
@@ -35,6 +54,28 @@
       <div class="field">
         <label for="repeatInput">Repeat</label>
         <label class="check-row">
+          <input id="repeatInput" type="checkbox" />
+          every crossing
+        </label>
+      </div>
+
+      <div class="panel-actions">
+        <button type="button" class="save-btn" id="saveAlertBtn">Save</button>
+        <button type="button" class="clear-btn" id="clearAlertBtn">Clear</button>
+        <button type="button" class="close-btn" id="closeAlertBtn">Close</button>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button type="button" id="refreshBtn" aria-label="Refresh">↻</button>
+      <button type="button" id="alertBtn" aria-label="Price alert">!</button>
+      <button type="button" id="fullscreenBtn" aria-label="Fullscreen">⛶</button>
+    </div>
+  </main>
+
+  <script src="app.js" defer></script>
+</body>
+</html>        <label class="check-row">
           <input id="repeatInput" type="checkbox" />
           every crossing
         </label>
