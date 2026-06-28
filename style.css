@@ -31,10 +31,378 @@ body {
   text-align: center;
 }
 
+.coin-form {
+  position: fixed;
+  top: clamp(10px, 2.5vw, 18px);
+  left: clamp(10px, 3vw, 22px);
+  z-index: 6;
+}
+
+.coin-input {
+  width: clamp(62px, 17vw, 92px);
+  height: clamp(32px, 8vw, 40px);
+  border: 0;
+  border-radius: 999px;
+  padding: 0 12px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-size: clamp(13px, 3.5vw, 17px);
+  font-weight: 900;
+  text-align: center;
+  outline: none;
+}
+
+.coin-input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
 .time {
   position: fixed;
   top: clamp(10px, 2.5vw, 18px);
   right: clamp(12px, 3vw, 22px);
+  font-size: clamp(11px, 2.4vw, 20px);
+  font-weight: 800;
+  opacity: 0.45;
+  z-index: 5;
+}
+
+.price-wrap {
+  width: 100%;
+  max-width: 100vw;
+  height: 82svh;
+  padding: 0 clamp(2px, 1.5vw, 12px);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.pair-label {
+  margin-bottom: clamp(6px, 1.5vh, 12px);
+  font-size: clamp(13px, 3.5vw, 24px);
+  line-height: 1;
+  font-weight: 900;
+  opacity: 0.38;
+  letter-spacing: 0.08em;
+}
+
+.price {
+  width: 100%;
+  max-width: 100%;
+
+  font-size: clamp(48px, 16vw, 230px);
+  line-height: 0.88;
+  font-weight: 900;
+  letter-spacing: -0.075em;
+
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.range {
+  margin-top: clamp(8px, 1.8vh, 16px);
+  width: 100%;
+  max-width: 96vw;
+
+  font-size: clamp(12px, 3.2vw, 24px);
+  line-height: 1.1;
+  font-weight: 900;
+  opacity: 0.42;
+
+  overflow-wrap: anywhere;
+}
+
+.alert-status {
+  width: 100%;
+  max-width: 96vw;
+  min-height: 1.25em;
+  margin-bottom: clamp(48px, 9vh, 72px);
+
+  font-size: clamp(12px, 3.2vw, 24px);
+  line-height: 1.15;
+  font-weight: 800;
+  opacity: 0.68;
+
+  overflow-wrap: anywhere;
+}
+
+.alert-status.triggered {
+  color: #ff9f0a;
+  opacity: 1;
+}
+
+.controls {
+  position: fixed;
+  right: clamp(10px, 3vw, 16px);
+  bottom: clamp(10px, 3vw, 16px);
+  display: flex;
+  gap: clamp(7px, 2vw, 10px);
+  z-index: 5;
+}
+
+button {
+  width: clamp(38px, 10vw, 48px);
+  height: clamp(38px, 10vw, 48px);
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  font-size: clamp(18px, 5vw, 24px);
+  font-weight: 900;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+button:active {
+  transform: scale(0.94);
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.dot {
+  position: fixed;
+  left: clamp(14px, 4vw, 20px);
+  bottom: clamp(26px, 6vw, 35px);
+  width: clamp(8px, 2vw, 10px);
+  height: clamp(8px, 2vw, 10px);
+  border-radius: 50%;
+  background: #666;
+  z-index: 5;
+}
+
+.dot.live {
+  background: #30d158;
+}
+
+.dot.warn {
+  background: #ff9f0a;
+}
+
+.dot.dead {
+  background: #ff453a;
+}
+
+.panel {
+  position: fixed;
+  left: clamp(10px, 3vw, 18px);
+  right: clamp(10px, 3vw, 18px);
+  bottom: clamp(64px, 13vw, 78px);
+  max-height: calc(100svh - 92px);
+  overflow-y: auto;
+
+  padding: clamp(14px, 4vw, 18px);
+  border-radius: 22px;
+  background: rgba(28, 28, 30, 0.96);
+  backdrop-filter: blur(18px);
+  z-index: 10;
+  display: none;
+  text-align: left;
+}
+
+.panel.open {
+  display: block;
+}
+
+.panel-title {
+  margin-bottom: 14px;
+  font-size: clamp(15px, 4vw, 18px);
+  font-weight: 900;
+  opacity: 0.9;
+}
+
+.field {
+  display: grid;
+  grid-template-columns: minmax(82px, 112px) 1fr;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.field label {
+  font-size: clamp(13px, 3.5vw, 15px);
+  font-weight: 800;
+  opacity: 0.7;
+}
+
+.field input[type="number"] {
+  width: 100%;
+  min-width: 0;
+  padding: 12px 13px;
+  border: 0;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-size: clamp(16px, 4.5vw, 19px);
+  font-weight: 800;
+  outline: none;
+}
+
+.field input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: clamp(14px, 3.8vw, 16px);
+  font-weight: 800;
+  opacity: 0.85;
+}
+
+.check-row input {
+  width: 20px;
+  height: 20px;
+  accent-color: #30d158;
+}
+
+.panel-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.panel-actions button {
+  width: auto;
+  height: 44px;
+  flex: 1;
+  border-radius: 14px;
+  font-size: clamp(14px, 3.8vw, 16px);
+}
+
+.save-btn {
+  background: #30d158;
+  color: #000;
+}
+
+.clear-btn {
+  background: rgba(255, 69, 58, 0.26);
+}
+
+.close-btn {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+/* Tall phones */
+@media (max-width: 430px) and (orientation: portrait) {
+  .price-wrap {
+    height: 84svh;
+  }
+
+  .price {
+    font-size: clamp(54px, 19vw, 104px);
+    line-height: 0.86;
+    letter-spacing: -0.08em;
+  }
+
+  .alert-status {
+    margin-bottom: 58px;
+    font-size: clamp(12px, 3.8vw, 18px);
+  }
+}
+
+/* Very narrow phones */
+@media (max-width: 360px) and (orientation: portrait) {
+  .price-wrap {
+    height: 83svh;
+  }
+
+  .price {
+    font-size: clamp(48px, 18vw, 86px);
+    letter-spacing: -0.075em;
+  }
+
+  .field {
+    grid-template-columns: 82px 1fr;
+  }
+}
+
+/* Tablets and medium screens */
+@media (min-width: 431px) and (max-width: 900px) {
+  .price-wrap {
+    height: 82svh;
+  }
+
+  .price {
+    font-size: clamp(76px, 15.5vw, 150px);
+  }
+}
+
+/* Large desktop screens */
+@media (min-width: 901px) {
+  .price-wrap {
+    height: 80svh;
+  }
+
+  .price {
+    font-size: clamp(120px, 13vw, 240px);
+  }
+}
+
+/* Short landscape screens */
+@media (orientation: landscape) and (max-height: 520px) {
+  .app {
+    padding-left: clamp(54px, 10vw, 90px);
+    padding-right: clamp(54px, 10vw, 90px);
+  }
+
+  .price-wrap {
+    height: 78svh;
+  }
+
+  .price {
+    font-size: clamp(48px, 24vh, 128px);
+    line-height: 0.82;
+    letter-spacing: -0.075em;
+  }
+
+  .range {
+    margin-top: 6px;
+    font-size: clamp(11px, 3.8vh, 18px);
+  }
+
+  .alert-status {
+    margin-bottom: 8px;
+    font-size: clamp(12px, 4vh, 20px);
+  }
+
+  .panel {
+    left: clamp(58px, 11vw, 90px);
+    right: clamp(58px, 11vw, 90px);
+    bottom: 58px;
+  }
+}
+
+/* Ultra-short landscape screens */
+@media (orientation: landscape) and (max-height: 360px) {
+  .price-wrap {
+    height: 76svh;
+  }
+
+  .price {
+    font-size: clamp(42px, 22vh, 88px);
+  }
+
+  .time,
+  .range,
+  .alert-status {
+    font-size: 11px;
+  }
+
+  .coin-input {
+    width: 62px;
+    height: 30px;
+    font-size: 12px;
+  }
+
+  button {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+  }
+}  right: clamp(12px, 3vw, 22px);
   font-size: clamp(11px, 2.4vw, 20px);
   font-weight: 800;
   opacity: 0.45;
