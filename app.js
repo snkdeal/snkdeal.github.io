@@ -92,7 +92,7 @@ function compact(value) {
   if (!Number.isFinite(n)) return "--";
 
   if (Math.abs(n) >= 1000000) {
-    return `${Number((n / 1000000).toFixed(2))}m`;
+    return `${Number((n / 1000000).toFixed(2))}e`;
   }
 
   if (Math.abs(n) >= 1000) {
